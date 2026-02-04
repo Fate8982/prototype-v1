@@ -196,6 +196,13 @@ input[value="Thriller"]:checked + span {
     border-color: rgb(20,184,166);
     background: rgba(20,184,166,0.35);
 }
+/* adventure – TEAL */
+input[value="adventure"]:checked + span {
+    box-shadow: 0 0 25px rgba(5, 26, 96, 0.9), 0 0 70px rgba(20,184,166,0.6);
+    border-color: rgb(20,184,166);
+    background: rgba(20,184,166,0.35);
+}
+
 
 /* ===============================
    BUTTON
