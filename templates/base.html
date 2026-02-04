@@ -7,9 +7,75 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
 </head>
 <body>
+<div id="splash-screen">
+    <div class="stars"></div>
+    <div class="stars layer2"></div>
+    <div class="stars layer3"></div>
+
+    <div class="splash-text zoom-out">
+        NextWatch
+    </div>
+</div>
+<div class="shooting-stars">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+</div>
+
+
+
+<audio id="intro-sound" preload="auto" muted>
+    <source src="{{ url_for('static', filename='sounds/intro.mp3') }}" type="audio/mpeg">
+</audio>
+
+
+
+ </div>
+
     <main>
         {% block content %}{% endblock %}
     </main>
 
 </body>
+
+
+<script>
+/* ===============================
+   SPLASH CONTROL (ONCE)
+================================ */
+
+// show splash only once per session
+if (!sessionStorage.getItem("splashShown")) {
+    sessionStorage.setItem("splashShown", "true");
+
+    // remove splash after animation
+    setTimeout(() => {
+        const splash = document.getElementById("splash-screen");
+        if (splash) splash.remove();
+    }, 3800);
+} else {
+    // remove immediately if already seen
+    const splash = document.getElementById("splash-screen");
+    if (splash) splash.remove();
+}
+
+/* ===============================
+   MOUSE PARALLAX (DESKTOP ONLY)
+================================ */
+if (window.matchMedia("(pointer: fine)").matches) {
+    document.addEventListener("mousemove", (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 20;
+        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+
+        document.documentElement.style.setProperty("--dx", `${x}px`);
+        document.documentElement.style.setProperty("--dy", `${y}px`);
+    });
+}
+</script>
+
+
+
+
 </html>
