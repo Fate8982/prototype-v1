@@ -386,7 +386,7 @@ function updateSpotlight() {
 
     // Reset timer
     clearInterval(spotlightTimer);
-    spotlightTimer = setInterval(nextSpotlight, 3500);
+    spotlightTimer = setInterval(nextSpotlight, 4000);
 }  
 
 
@@ -409,7 +409,7 @@ document.getElementById("spotlightNext").onclick = nextSpotlight;
 document.getElementById("spotlightPrev").onclick = prevSpotlight;
 
 // Auto slide
-spotlightTimer = setInterval(nextSpotlight, 3500);
+spotlightTimer = setInterval(nextSpotlight, 4800);
 
 updateSpotlight();
 
