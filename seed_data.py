@@ -1,4 +1,5 @@
 import sqlite3
+from openai import images
 import requests
 import time
 
@@ -99,7 +100,24 @@ def seed_anime_from_jikan():
             if added >= 50:
                 break
 
-            title = anime.get("title")
+            title = (
+            anime.get("title_english")
+             or anime.get("title")
+            )
+
+            synopsis = anime.get("synopsis") or ""
+
+            alt_titles = [
+            anime.get("title", ""),
+            anime.get("title_english", ""),
+            anime.get("title_japanese", "")
+            ]
+
+            search_blob = " ".join(t for t in alt_titles if t)
+    
+            full_description = f"{synopsis}\n\n{search_blob}"
+
+
             if not title:
                 continue
 
@@ -114,11 +132,16 @@ def seed_anime_from_jikan():
                 [g["name"].lower() for g in anime.get("genres", [])]
             )
 
-            poster_url = (
-                anime.get("images", {})
-                .get("jpg", {})
-                .get("large_image_url")
-            )
+            images = anime.get("images", {}).get("jpg", {})
+
+            poster_url = images.get("large_image_url") or images.get("image_url")
+            background_url = images.get("image_url") or poster_url
+
+            # poster_url = (
+            #     anime.get("images", {})
+            #     .get("jpg", {})
+            #     .get("large_image_url")
+            # )
 
             trailer_url = None
             if anime.get("trailer") and anime["trailer"].get("embed_url"):
@@ -130,19 +153,20 @@ def seed_anime_from_jikan():
                     poster_url, background_url, trailer_url,
                     rating, views_count, episodes, duration
                 )
-                VALUES (?, 'anime', ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
-            """, (
+               VALUES (?, 'anime', ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+                """, (
                 title,
-                anime.get("synopsis"),
+                full_description,
                 anime.get("year"),
                 genres,
                 poster_url,
-                poster_url,
+                background_url,
                 trailer_url,
                 anime.get("score"),
                 anime.get("popularity"),
                 anime.get("episodes")
             ))
+
 
             print(f"✅ Added anime: {title}")
             added += 1

@@ -142,9 +142,9 @@ def logout():
     return redirect("/")
 
 SPOTLIGHT_VIDEO_MAP = {
-    1:"/static/videos/frieren.mp4",
-    5: "/static/videos/frieren_s2.mp4",
-    6: "/static/videos/chainsaw_man.mp4"
+    202:"/static/videos/frieren.mp4",
+    203: "/static/videos/frieren_s2.mp4",
+    204: "/static/videos/chainsaw_man.mp4"
 }
 
 

@@ -47,4 +47,9 @@
 -- );
 
 
-ALTER TABLE users ADD COLUMN preferred_genres TEXT;
+-- ALTER TABLE users ADD COLUMN preferred_genres TEXT;
+
+-- ALTER TABLE favorites ADD COLUMN created_at DATETIME;
+
+-- DELETE FROM content WHERE type = 'anime';
+-- DELETE FROM content WHERE type = 'movie';
