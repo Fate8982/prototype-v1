@@ -146,10 +146,23 @@
     <section class="recommended-section hidden" id="recommendedSection">
         <h2>✨ Recommended for You</h2>
 
+        <div class="recommended-meta">
+            <p class="recommended-reason" id="recommendedReason"></p>
+
+            <div class="why-container">
+                <span class="why-icon">?</span>
+
+                <div class="why-tooltip" id="whyTooltip">
+                    <!-- filled by JS -->
+                </div>
+            </div>
+        </div>
+
         <div class="horizontal-row" id="recommendedRow">
-            <!-- cards injected here -->
+            <!--cards filled appear here-->
         </div>
     </section>
+
 
     {% endif %}
 
@@ -425,13 +438,52 @@ document.addEventListener("DOMContentLoaded", () => {
 function fetchRecommended() {
     fetch(`/api/recommended?type={{ content_type }}`)
         .then(res => res.json())
-        .then(items => {
-            renderRecommended(items);
+        .then(data => {
+            if (!data.items || data.items.length === 0) return;
 
-            // 🔥 start auto-scroll ONLY after cards exist
+            const section = document.getElementById("recommendedSection");
+            const row = document.getElementById("recommendedRow");
+            const reasonEl = document.getElementById("recommendedReason");
+
+            const tooltip = document.getElementById("whyTooltip");
+
+            if (tooltip && data.all_genres) {
+                tooltip.innerHTML = `
+                    <strong>Why am I seeing this?</strong><br>
+                    These recommendations are based on the genres you selected:<br>
+                    <em>${data.all_genres.join(", ")}</em><br><br>
+                    <a href="/select-genres?edit=1" class="change-preferences">
+                        Change preferences
+                    </a>
+                `;
+            }
+
+
+
+            section.classList.remove("hidden");
+            row.innerHTML = "";
+
+            if (reasonEl && data.reason) {
+                reasonEl.textContent = data.reason;
+            }
+
+            data.items.forEach(item => {
+                const card = document.createElement("a");
+                card.href = `/content/${item.id}`;
+                card.className = "card";
+
+                card.innerHTML = `
+                    <img src="${item.poster_url}" alt="${item.title}">
+                    <p>${item.title}</p>
+                `;
+
+                row.appendChild(card);
+            });
+
             autoScrollRow("recommendedRow");
         });
 }
+
 
 function renderRecommended(items) {
     const row = document.getElementById("recommendedRow");

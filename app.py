@@ -52,19 +52,29 @@ def select_genres():
 
     db = get_db()
 
-    # Check if user already selected genres
     user = db.execute(
         "SELECT preferred_genres FROM users WHERE id = ?",
         (session["user_id"],)
     ).fetchone()
 
-    if user["preferred_genres"] and user["preferred_genres"].strip() != "":
+    is_editing = request.args.get("edit") == "1"
+
+    if (
+        user["preferred_genres"]
+        and user["preferred_genres"].strip() != ""
+        and not is_editing
+    ):
         return redirect("/")
 
-
-    # ✅ ALWAYS define this (fixes the error)
-    selected_genres = []
     error = None
+
+    # ✅ PRE-FILL SELECTED GENRES (KEY FIX)
+    if user["preferred_genres"]:
+        selected_genres = [
+            g.strip() for g in user["preferred_genres"].split(",")
+        ]
+    else:
+        selected_genres = []
 
     if request.method == "POST":
         selected_genres = request.form.getlist("genres")
@@ -75,7 +85,6 @@ def select_genres():
             save_user_genres(session["user_id"], selected_genres)
             session["preferences_saved"] = True
             return redirect("/")
-
 
     genres = [
         "Action", "Adventure", "Drama",
@@ -89,6 +98,7 @@ def select_genres():
         selected_genres=selected_genres,
         error=error
     )
+
 
 
 
@@ -296,6 +306,8 @@ def content_detail(content_id):
         "detail.html",
         content=content
     )
+    
+    
 @app.route("/api/recommend")
 def api_recommend():
     genres = request.args.get("genres", "").split(",")
@@ -325,26 +337,26 @@ def api_recommended():
     content_type = request.args.get("type", "anime")
 
     if not user_id:
-        return jsonify([])
+        return jsonify({"items": [], "reason": None, "all_genres": []})
 
     db = get_db()
 
-    # get user preferred genres
     user = db.execute(
         "SELECT preferred_genres FROM users WHERE id = ?",
         (user_id,)
     ).fetchone()
 
     if not user or not user["preferred_genres"]:
-        return jsonify([])
+        return jsonify({"items": [], "reason": None, "all_genres": []})
 
-    genres = [g.strip() for g in user["preferred_genres"].split(",")]
+    preferred_genres = [
+        g.strip() for g in user["preferred_genres"].split(",")
+    ]
 
-    # build genre conditions
-    genre_conditions = " OR ".join(["c.genres LIKE ?"] * len(genres))
-    genre_params = [f"%{g}%" for g in genres]
+    genre_conditions = " OR ".join(["c.genres LIKE ?"] * len(preferred_genres))
+    genre_params = [f"%{g}%" for g in preferred_genres]
 
-    query = f"""
+    results = db.execute(f"""
         SELECT c.*
         FROM content c
         WHERE c.type = ?
@@ -356,12 +368,18 @@ def api_recommended():
         )
         ORDER BY RANDOM()
         LIMIT 10
-    """
+    """, [content_type, *genre_params, user_id]).fetchall()
 
-    params = [content_type, *genre_params, user_id]
+    reason = "Because you like " + ", ".join(preferred_genres[:3])
 
-    results = db.execute(query, params).fetchall()
-    return jsonify([dict(row) for row in results])
+    return jsonify({
+        "items": [dict(row) for row in results],
+        "reason": reason,
+        "all_genres": preferred_genres
+    })
+
+
+
 
 
 if __name__ == "__main__":
