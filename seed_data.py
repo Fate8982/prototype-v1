@@ -12,55 +12,7 @@ OMDB_URL = "http://www.omdbapi.com/"
 
 
 MOVIE_TITLES = [
-    "The Shawshank Redemption",
-    "The Godfather",
-    "The Dark Knight",
-    "The Godfather Part II",
-    "12 Angry Men",
-    "Schindler's List",
-    "The Lord of the Rings: The Return of the King",
-    "Pulp Fiction",
-    "The Lord of the Rings: The Fellowship of the Ring",
-    "Fight Club",
-    "Forrest Gump",
-    "Inception",
-    "The Lord of the Rings: The Two Towers",
-    "The Matrix",
-    "Goodfellas",
-    "Se7en",
-    "Interstellar",
-    "The Silence of the Lambs",
-    "Saving Private Ryan",
-    "The Green Mile",
-    "Gladiator",
-    "The Prestige",
-    "The Departed",
-    "Whiplash",
-    "The Lion King",
-    "The Pianist",
-    "Parasite",
-    "Joker",
-    "Avengers: Endgame",
-    "Iron Man",
-    "Django Unchained",
-    "The Wolf of Wall Street",
-    "Batman Begins",
-    "The Dark Knight Rises",
-    "Doctor Strange",
-    "Spider-Man: No Way Home",
-    "Titanic",
-    "Avatar",
-    "Dune",
-    "Oppenheimer",
-    "Blade Runner 2049",
-    "Mad Max: Fury Road",
-    "Logan",
-    "John Wick",
-    "The Social Network",
-    "Shutter Island",
-    "La La Land",
-    "No Country for Old Men",
-    "The Grand Budapest Hotel"
+    "inception"
 ]
 
 
@@ -202,19 +154,78 @@ def seed_movies_from_omdb():
         data = response.json()
 
         if data.get("Response") != "True":
-            print(f"❌ Skipped: {title}")
+            print(f"❌ Skipped (not found): {title}")
             continue
 
+        # 🔒 Skip non-movies (OMDb sometimes returns series)
+        if data.get("Type") != "movie":
+            print(f"⚠️ Skipped (not a movie): {data.get('Title')}")
+            continue
+
+        # 🔁 Prevent duplicates
         cursor.execute(
-            "SELECT id FROM content WHERE title = ? AND type = 'movie'",
+            "SELECT id, trailer_url, background_url FROM content WHERE title = ? AND type = 'movie'",
             (data["Title"],)
         )
-        if cursor.fetchone():
-            continue
+        existing = cursor.fetchone()
 
+
+        # 🖼️ Poster & background
         poster_url = None
         if data.get("Poster") and data["Poster"] != "N/A":
             poster_url = data["Poster"]
+
+        background_url = poster_url  # safe fallback for now
+
+        # 📅 Release year (robust)
+        year_raw = data.get("Year", "")
+        release_year = None
+        if year_raw and year_raw[:4].isdigit():
+            release_year = int(year_raw[:4])
+
+        # ⏱️ Runtime
+        runtime = None
+        if data.get("Runtime") and data["Runtime"] != "N/A":
+            runtime = int(data["Runtime"].replace(" min", ""))
+
+        # ⭐ Rating
+        rating = None
+        if data.get("imdbRating") and data["imdbRating"] != "N/A":
+            rating = float(data["imdbRating"])
+
+        # 🎭 Genres
+        genres = data.get("Genre", "").lower()
+
+        # 📝 Plot
+        description = data.get("Plot")
+        
+        # ▶️ Trailer (YouTube search embed)
+        title_for_trailer = data["Title"].replace(" ", "+")
+        trailer_url = f"https://www.youtube.com/embed?listType=search&list={title_for_trailer}+official+trailer"
+
+        if existing:
+            content_id, existing_trailer, existing_bg = existing
+
+            # Only update if missing
+            if not existing_trailer or not existing_bg:
+                cursor.execute("""
+                    UPDATE content
+                    SET
+                        trailer_url = COALESCE(trailer_url, ?),
+                        background_url = COALESCE(background_url, ?)
+                    WHERE id = ?
+                """, (
+                    trailer_url,
+                    background_url,
+                    content_id
+                ))
+
+                print(f"🔄 Updated movie: {data['Title']}")
+            else:
+                print(f"↩️ No update needed: {data['Title']}")
+
+            continue    
+
 
         cursor.execute("""
             INSERT INTO content (
@@ -225,25 +236,27 @@ def seed_movies_from_omdb():
             VALUES (?, 'movie', ?, ?, ?, ?, ?, NULL, ?, ?, NULL, ?)
         """, (
             data["Title"],
-            data.get("Plot"),
-            int(data["Year"]) if data.get("Year") else None,
-            data.get("Genre", "").lower(),
+            description,
+            release_year,
+            genres,
             poster_url,
-            poster_url,
-            float(data["imdbRating"]) if data.get("imdbRating") != "N/A" else None,
+            background_url,
+            trailer_url,
+            rating,
             None,
-            int(data["Runtime"].replace(" min", "")) if data.get("Runtime") != "N/A" else None
+            runtime
         ))
 
         print(f"✅ Added movie: {data['Title']}")
         added += 1
-        time.sleep(0.5)
+        time.sleep(0.5)  # respect OMDb limits
 
     conn.commit()
     conn.close()
     print(f"🎉 Movie seeding completed ({added} movies added).")
 
 
+
 if __name__ == "__main__":
-    seed_anime_from_jikan()
-    # seed_movies_from_omdb()
+    # seed_anime_from_jikan()
+    seed_movies_from_omdb()
