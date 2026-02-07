@@ -158,7 +158,6 @@ def save_user_genres(user_id, genres):
     )
     db.commit()
 
-<<<<<<< HEAD
 def get_top_rated(content_type):
     conn = get_db()
     cur = conn.cursor()
@@ -174,7 +173,6 @@ def get_top_rated(content_type):
     data = cur.fetchall()
     conn.close()
     return data
-=======
 
 def get_spotlight_content(content_type, limit=3):
     db = get_db()
@@ -209,4 +207,3 @@ def get_spotlight_map():
     cur = conn.cursor()
     cur.execute("SELECT position, content_id FROM spotlight")
     return {row["position"]: row["content_id"] for row in cur.fetchall()}
->>>>>>> baa7bcc0cf4863320b528826635a0195193d3d5f
