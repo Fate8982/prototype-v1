@@ -12,7 +12,8 @@ from utils.db import (
     remove_favorite,
     get_user_favorites,
     save_user_genres,
-    get_spotlight_content
+    get_spotlight_content,
+    get_top_rated
 )
 
 
@@ -276,6 +277,8 @@ def home():
 
     trending = get_trending_by_genres(content_type)
     popular = get_popular_by_genres(content_type)
+    top_rated = get_top_rated(content_type)
+
 
     # 🔔 pop the toast flag (shows once)
     show_toast = session.pop("preferences_saved", None)
@@ -284,6 +287,7 @@ def home():
         "home.html",
         trending=trending,
         popular=popular,
+        top_rated=top_rated,
         content_type=content_type,
         show_toast=show_toast
     )

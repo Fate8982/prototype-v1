@@ -167,3 +167,19 @@ def get_spotlight_content(content_type, limit=3):
         ORDER BY rating DESC
         LIMIT ?
     """, (content_type, limit)).fetchall()
+
+def get_top_rated(content_type):
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT id, title, poster_url, rating
+        FROM content
+        WHERE type = ?
+        ORDER BY rating DESC
+        LIMIT 5
+    """, (content_type,))
+
+    data = cur.fetchall()
+    conn.close()
+    return data
