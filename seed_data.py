@@ -12,9 +12,7 @@ OMDB_URL = "http://www.omdbapi.com/"
 
 
 MOVIE_TITLES = [
-    "Oppenheimer",
-    "Barbie",
-    "shang-chi and the legend of the ten rings"
+    "Kingsglaive: Final Fantasy XV"
 ]
 
 

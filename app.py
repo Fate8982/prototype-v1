@@ -209,9 +209,10 @@ SPOTLIGHT_VIDEO_MAP = {
     204: "/static/videos/chainsaw_man.mp4",
     403: "/static/videos/dhurandhar.mp4",
     234: "/static/videos/your_namr.mp4",
-    461: "/static/videos/shangchi.mp4",
     265: "/static/videos/jjk_s2.mp4",
     402: "/static/videos/3_idiots.mp4",
+    254: "/static/videos/love_is_war_movie.mp4",
+    469: "/static/videos/tangled.mp4",
 }
 
 
