@@ -27,7 +27,7 @@ def is_admin():
 @app.context_processor
 def inject_admin_flag():
     return {
-        "is_admin": session.get("user_id") in [1, 25]
+        "is_admin": session.get("user_id") in [1, 30]
     }
 
 
