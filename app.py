@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
 def is_admin():
-    return session.get("user_id") in [1, 15]
+    return session.get("user_id") in [1, 30]
 
 @app.context_processor
 def inject_admin_flag():
