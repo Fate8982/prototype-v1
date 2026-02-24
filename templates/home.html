@@ -222,28 +222,40 @@
 </section>
 
 <!-- ✅ TOP RATED (ALWAYS VISIBLE) -->
-<section class="section rating-section">
-    <h2>🏆 Top Rated</h2>
+<section class="top-rated-section">
+ <h2 class="top-title">🔥 Top Rated</h2>
+    {% for anime in top_rated %}
+    <a href="{{ url_for('content_detail', content_id=anime.id) }}" class="anime-banner">
 
-    <div class="rating-horizontal">
-        {% for item in top_rated %}
-        <a href="{{ url_for('content_detail', content_id=item.id) }}"
-           class="rating-h-card">
+        <!-- Background Image -->
+        <div class="banner-bg" style="background-image: url('{{ anime.banner_url }}');"></div>
 
-            <span class="rating-rank">0{{ loop.index }}</span>
+        <!-- Gradient Overlay -->
+        <div class="banner-overlay"></div>
 
-            <img src="{{ item.poster_url }}" alt="{{ item.title }}">
+        <!-- Content -->
+        <div class="banner-content">
 
-            <div class="rating-info">
-                <h3>{{ item.title }}</h3>
+            <div class="title-pill">
+                {{ anime.title }}
             </div>
 
-            <div class="rating-score">
-                {{ "%.1f"|format(item.rating) }}
+            <div class="rating-box">
+                <span class="rating-number">{{ anime.rating }}</span>
+                <span class="out-of">/10</span>
+
+                <span class="imdb-badge">IMDb</span>
             </div>
-        </a>
-        {% endfor %}
-    </div>
+
+            <div class="episode-info">
+                {{ anime.season_info }}
+            </div>
+
+        </div>
+
+    </a>
+    {% endfor %}
+
 </section>
 
 
