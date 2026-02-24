@@ -1832,6 +1832,10 @@ body.light .theme-toggle {
     opacity: 0.85;
 }
 
-
-
-
+/* Rating score */
+.rating-score {
+    font-size: 36px;
+    font-weight: 800;
+    color: #facc15;
+    text-align: right;
+}
