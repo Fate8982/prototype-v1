@@ -222,6 +222,42 @@
     </div>
 </section>
 
+<<<<<<< HEAD
+<!-- ✅ TOP RATED (ALWAYS VISIBLE) -->
+<section class="top-rated-section">
+ <h2 class="top-title">🔥 Top Rated</h2>
+    {% for anime in top_rated %}
+    <a href="{{ url_for('content_detail', content_id=anime.id) }}" class="anime-banner">
+
+        <!-- Background Image -->
+        <div class="banner-bg" style="background-image: url('{{ anime.banner_url }}');"></div>
+
+        <!-- Gradient Overlay -->
+        <div class="banner-overlay"></div>
+
+        <!-- Content -->
+        <div class="banner-content">
+
+            <div class="title-pill">
+                {{ anime.title }}
+            </div>
+
+            <div class="rating-box">
+                <span class="rating-number">{{ anime.rating }}</span>
+                <span class="out-of">/10</span>
+
+                <span class="imdb-badge">IMDb</span>
+            </div>
+
+            <div class="episode-info">
+                {{ anime.season_info }}
+            </div>
+
+        </div>
+
+    </a>
+    {% endfor %}
+=======
 <!-- ⭐ ADMIN'S TOP PICKS -->
 <section class="section admins-top-picks">
 
@@ -242,6 +278,7 @@
         </div>
 
     </div>
+>>>>>>> d8d185e8606232bd03d20fada3564d49fcad4d8d
 
 </section>
 

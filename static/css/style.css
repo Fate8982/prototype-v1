@@ -1739,117 +1739,97 @@ body.light .theme-toggle {
 
 
 
-.rating-section {
-    margin-top: 40px;
+.top-rated-section {
+    width: 100%;
 }
 
-.rating-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Main card */
-.rating-card {
-    display: grid;
-    grid-template-columns: 60px 90px 1fr 70px;
-    align-items: center;
-    background: linear-gradient(135deg, #0b122b, #121a3a);
-    border-radius: 16px;
-    padding: 14px 16px;
+/* Banner Container */
+.anime-banner {
+    position: relative;
+    display: block;
+    height: 260px;
+    margin-bottom: 15px;
+    overflow: hidden;
     text-decoration: none;
-    color: #fff;
-    transition: transform 0.2s ease, background 0.2s ease;
+    color: white;
 }
 
-.rating-card:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #121a3a, #1a2470);
+/* Background Image */
+.banner-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease;
 }
 
-/* Rank number (01, 02, 03…) */
-.rating-rank {
-    font-size: 32px;
-    font-weight: 800;
-    color: #5f6cff;
-    opacity: 0.9;
+.anime-banner:hover .banner-bg {
+    transform: scale(1.05);
 }
 
-/* Poster */
-.rating-card img {
-    width: 75px;
-    height: 105px;
-    border-radius: 12px;
-    object-fit: cover;
+/* Dark Gradient Overlay */
+.banner-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right,
+        rgba(0,0,0,0.85) 20%,
+        rgba(0,0,0,0.4) 50%,
+        rgba(0,0,0,0.2) 80%);
 }
 
-/* Title area */
-.rating-info {
-    padding-left: 16px;
+/* Content Box */
+.banner-content {
+    position: relative;
+    z-index: 2;
+    padding: 40px 60px;
 }
 
-.rating-info h3 {
+/* Title Pill */
+.title-pill {
+    display: inline-block;
+    background: white;
+    color: black;
+    padding: 8px 18px;
+    font-weight: 700;
+    border-radius: 20px;
     font-size: 18px;
-    font-weight: 600;
-    line-height: 1.3;
+    margin-bottom: 15px;
 }
 
-/* Rating number (9.6, 9.3…) */
-.rating-score {
-    font-size: 32px;
-    font-weight: 800;
-    text-align: right;
-    color: #f5c84c; /* gold like image */
+/* Rating Box */
+.rating-box {
+    font-size: 60px;
+    font-weight: bold;
+    line-height: 1;
 }
 
-/* Container */
-.rating-horizontal {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.rating-number {
+    font-size: 70px;
 }
 
-/* Big horizontal card */
-.rating-h-card {
-    display: grid;
-    grid-template-columns: 70px 140px 1fr 90px;
-    align-items: center;
-    padding: 18px 20px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #0c1435, #141f52);
-    color: #fff;
-    text-decoration: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+.out-of {
+    font-size: 30px;
+    margin-left: 5px;
 }
 
-.rating-h-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 40px rgba(79, 92, 255, 0.25);
+/* IMDb Badge */
+.imdb-badge {
+    background: #f5c518;
+    color: black;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-left: 15px;
 }
 
-/* Rank number */
-.rating-rank {
-    font-size: 36px;
-    font-weight: 800;
-    color: #6c7bff;
-}
-
-/* Big poster */
-.rating-h-card img {
-    width: 110px;
-    height: 150px;
-    border-radius: 14px;
-    object-fit: cover;
-}
-
-/* Title area */
-.rating-info {
-    padding-left: 20px;
-}
-
-.rating-info h3 {
-    font-size: 22px;
-    font-weight: 600;
+/* Season Text */
+.episode-info {
+    margin-top: 10px;
+    font-size: 18px;
+    opacity: 0.85;
 }
 
 /* Rating score */
@@ -1858,160 +1838,4 @@ body.light .theme-toggle {
     font-weight: 800;
     color: #facc15;
     text-align: right;
-}
-
-
-.curator-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-}
-
-.curator-panel {
-    padding: 20px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.03);
-}
-
-.fate-panel {
-    text-align: right;
-    border: 1px solid rgba(106,92,255,0.4);
-}
-
-.fate-panel .pick-overlay {
-    text-align: right;
-    align-items: flex-end;
-}
-
-.fate-panel .pick-overlay {
-    background: linear-gradient(
-        to left,
-        rgba(10,15,30,0.95),
-        rgba(10,15,30,0.5),
-        transparent
-    );
-}
-
-.akriti-panel {
-    border: 1px solid rgba(236,72,153,0.4);
-}
-
-
-.pick-item {
-    display: block;
-    height: 85px;
-    margin-bottom: 14px;
-
-    background-size: cover;
-    background-position: center;
-
-    border-radius: 14px;
-    overflow: hidden;
-    position: relative;
-
-    /* filter: blur(2px); */
-    transition: all 0.4s ease;
-}
-
-.pick-item:hover {
-    height: 220px;
-    filter: blur(0);
-}
-
-.pick-overlay {
-    position: absolute;
-    inset: 0;
-    padding: 18px;
-
-    background: linear-gradient(
-        to right,
-        rgba(10,15,30,0.95) 0%,
-        rgba(10,15,30,0.75) 40%,
-        rgba(10,15,30,0.2) 70%,
-        transparent 100%
-    );
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-
-.pick-rank {
-    font-weight: bold;
-    font-size: 18px;
-    color: #fff;
-}
-
-.pick-title {
-    margin: 4px 0;
-    color: #fff;
-}
-
-.pick-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-}
-
-
-.pick-extra {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: 0.3s ease;
-}
-
-.pick-item:hover .pick-extra {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.pick-rating {
-    font-weight: 600;
-    color: gold;
-}
-
-.pick-desc {
-    font-size: 13px;
-    color: #ddd;
-    margin-top: 6px;
-}
-
-.pick-item {
-    transition: transform 0.4s ease, height 0.4s ease, filter 0.4s ease;
-}
-
-.pick-item:hover {
-    transform: scale(1.02);
-}
-
-.pick-item {
-    position: relative;
-    height: 85px;
-    margin-bottom: 14px;
-    border-radius: 14px;
-    overflow: hidden;
-    transition: height 0.4s ease;
-}
-
-.pick-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-
-    filter: blur(2px);
-    transform: scale(1.05); /* prevents blur edge cutoff */
-
-    transition: filter 0.4s ease, transform 0.4s ease;
-}
-
-.pick-item:hover {
-    height: 220px;
-}
-
-.pick-item:hover .pick-bg {
-    filter: blur(0);
-    transform: scale(1.02);
 }
