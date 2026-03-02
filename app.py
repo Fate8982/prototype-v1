@@ -564,8 +564,38 @@ def profile():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user = get_user_by_id(session["user_id"])
-    return render_template("profile.html", user=user)
+    db = get_db()
+
+    # User
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (session["user_id"],)
+    ).fetchone()
+
+    # Favorites (join with content)
+    favorites = db.execute("""
+        SELECT c.id, c.title, c.poster_url
+        FROM favorites f
+        JOIN content c ON f.content_id = c.id
+        WHERE f.user_id = ?
+        ORDER BY f.id DESC
+    """, (session["user_id"],)).fetchall()
+
+    # User Reviews (join with content)
+    reviews = db.execute("""
+        SELECT r.*, c.title
+        FROM reviews r
+        JOIN content c ON r.content_id = c.id
+        WHERE r.user_id = ?
+        ORDER BY r.created_at DESC
+    """, (session["user_id"],)).fetchall()
+
+    return render_template(
+        "profile.html",
+        user=user,
+        favorites=favorites,
+        reviews=reviews
+    )
 
 @app.route("/set-avatar", methods=["POST"])
 def set_avatar():
