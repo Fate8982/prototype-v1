@@ -178,7 +178,9 @@
 
 <section class="section">
 
-        {% if session.get("user_id") %}
+    {% if session.get("user_id") %}
+
+    <!-- Recommended -->
     <section class="recommended-section hidden" id="recommendedSection">
         <h2>✨ Recommended for You</h2>
 
@@ -194,15 +196,38 @@
             </div>
         </div>
 
-        <div class="horizontal-row" id="recommendedRow">
-            <!--cards filled appear here-->
-        </div>
+        <div class="horizontal-row" id="recommendedRow"></div>
     </section>
 
 
+    <!-- Out of Comfort Zone -->
+    <section class="row-section">
+
+        <h2>🧭 Out of Your Comfort Zone</h2>
+
+        <div class="recommended-meta">
+
+            <p class="recommended-reason">
+                Try something different today
+            </p>
+
+            <div class="why-container">
+                <span class="why-icon">?</span>
+
+                <div class="why-tooltip" id="comfortWhyTooltip">
+                    <!-- filled by JS -->
+                </div>
+            </div>
+
+        </div> 
+
+        <div id="comfortZoneRow" class="horizontal-row"></div>
+
+    </section>
     {% endif %}
 
 
+    <!-- Trending -->
     <h2>🔥 Trending</h2>
 
     <div class="horizontal-row" id="trendingRow">
@@ -213,6 +238,7 @@
             </a>
         {% endfor %}
     </div>
+
 </section>
 
 <section class="section">
@@ -578,7 +604,61 @@ function renderRecommended(items) {
     });
 }
 
+// ================= OUT OF YOUR COMFORT ZONE =================
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    const container = document.getElementById("comfortZoneRow");
+    if (!container) return;
+
+    const contentType = "{{ content_type }}";
+    if (!contentType) return;
+
+    fetch(`/api/out-of-comfort/${contentType}`)
+        .then(res => res.json())
+        .then(data => {
+
+            container.innerHTML = "";
+
+            // Render cards
+            data.items.forEach(item => {
+
+                const card = document.createElement("a");
+                card.href = `/content/${item.id}`;
+                card.className = "card";
+
+                card.innerHTML = `
+                    <img src="${item.poster_url}" alt="${item.title}">
+                    <p>${item.title}</p>
+                `;
+
+                container.appendChild(card);
+
+            if (!data.items || data.items.length === 0) {
+                container.innerHTML = `<p class="empty-row">Nothing outside your comfort zone today 👀</p>`;
+                return;
+            }       
+
+            });
+
+            // Tooltip
+            const tooltip = document.getElementById("comfortWhyTooltip");
+
+            if (tooltip && data.user_genres) {
+                tooltip.innerHTML = `
+                    <strong>Why am I seeing this?</strong><br>
+                    These shows belong to genres outside your preferences.<br><br>
+                    Your current preferences:<br>
+                    <em>${data.user_genres.join(", ")}</em>
+                `;
+            }
+
+        })
+        .catch(err => {
+            console.error("Comfort zone row failed:", err);
+        });
+
+});
 
 function autoScrollRow(rowId) {
     const row = document.getElementById(rowId);
@@ -615,6 +695,7 @@ function autoScrollRow(rowId) {
 autoScrollRow("trendingRow");
 autoScrollRow("popularRow");
 autoScrollRow("recommendedRow");
+autoScrollRow("comfortZoneRow");
 
 </script>
 

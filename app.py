@@ -454,6 +454,61 @@ def api_recommended():
         "all_genres": preferred_genres
     })
 
+@app.route("/api/out-of-comfort/<content_type>")
+def out_of_comfort(content_type):
+
+    if "user_id" not in session:
+        return jsonify({"items": [], "user_genres": []})
+
+    db = get_db()
+    user_id = session["user_id"]
+
+    # Get preferred genres
+    user = db.execute(
+        "SELECT preferred_genres FROM users WHERE id = ?",
+        (user_id,)
+    ).fetchone()
+
+    if not user or not user["preferred_genres"]:
+        return jsonify({"items": [], "user_genres": []})
+
+    user_genres = [
+        g.strip() for g in user["preferred_genres"].split(",")
+    ]
+
+    # Build SQL conditions to exclude preferred genres
+    genre_conditions = " AND ".join(["c.genres NOT LIKE ?"] * len(user_genres))
+    genre_params = [f"%{g}%" for g in user_genres]
+
+    results = db.execute(f"""
+        SELECT c.*
+        FROM content c
+        WHERE c.type = ?
+        AND ({genre_conditions})
+
+        -- exclude favorites
+        AND c.id NOT IN (
+            SELECT content_id
+            FROM favorites
+            WHERE user_id = ?
+        )
+
+        -- exclude reviewed content
+        AND c.id NOT IN (
+            SELECT content_id
+            FROM reviews
+            WHERE user_id = ?
+        )
+
+        ORDER BY RANDOM()
+        LIMIT 10
+    """, [content_type, *genre_params, user_id, user_id]).fetchall()
+
+    return jsonify({
+        "items": [dict(row) for row in results],
+        "user_genres": user_genres
+    })
+
 
 @app.route("/api/admin-picks")
 def api_admin_picks():
