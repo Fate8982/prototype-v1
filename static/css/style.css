@@ -2332,3 +2332,53 @@ body.light .theme-toggle {
 .edit-actions button:last-child {
     background: rgba(255,255,255,0.08);
 }
+
+.review-card[data-rating="5"] {
+    border-left: 4px solid gold;
+}
+
+/* ===== Reviews Top Bar ===== */
+
+.reviews-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* ===== Sort Buttons ===== */
+
+.review-sort-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.review-sort-buttons button {
+
+    background: linear-gradient(90deg,#7f5cff,#ec4899);
+    color: white;
+
+    border: 1px solid #444;
+    border-radius: 20px;
+
+    padding: 6px 14px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.review-sort-buttons button:hover {
+    border-color: #777;
+}
+
+.review-sort-buttons button.active {
+
+    background: white;
+    color: black;
+
+    border-color: white;
+
+}

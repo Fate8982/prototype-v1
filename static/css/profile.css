@@ -371,3 +371,123 @@
     flex-shrink: 0;
 }
 
+.profile-review-toolbar {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+.profile-review-filter,
+.profile-review-sort {
+
+    display: flex;
+    gap: 10px;
+
+}
+
+.profile-review-filter button,
+.profile-review-sort button {
+
+    background: linear-gradient(90deg,#7f5cff,#ec4899);
+    color: white;
+
+    border: 1px solid #444;
+    border-radius: 20px;
+
+    padding: 6px 14px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+}
+
+.profile-review-filter button.active,
+.profile-review-sort button.active {
+
+    background: white;
+    color: black;
+
+}
+
+.top-rated-row {
+
+    display: flex;
+    gap: 14px;
+
+    overflow-x: auto;
+
+    padding-bottom: 8px;
+}
+
+.top-rated-card {
+
+    position: relative;
+
+}
+
+.top-rated-card img {
+
+    width: 120px;
+
+    border-radius: 10px;
+
+    transition: transform 0.2s ease;
+
+}
+
+.top-rated-card:hover img {
+
+    transform: scale(1.08);
+
+}
+
+.top-rated-rating {
+
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+
+    padding: 4px 8px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #ffd43b;
+
+}
+
+.top-rated-card {
+
+    position: relative;
+    overflow: hidden;
+
+}
+
+.top-rated-card img {
+
+    width: 120px;
+    border-radius: 10px;
+
+    transition: transform 0.25s ease;
+
+}
+
+.top-rated-card:hover img {
+
+    transform: scale(1.08);
+
+}

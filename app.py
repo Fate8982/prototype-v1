@@ -453,6 +453,93 @@ def api_recommended():
         "reason": reason,
         "all_genres": preferred_genres
     })
+    
+    
+@app.route("/api/because-you-liked")
+def because_you_liked():
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"items": []})
+
+    db = get_db()
+    content_type = request.args.get("type")
+
+    # Try favorites
+    source = db.execute("""
+        SELECT c.id, c.title, c.genres, c.type
+        FROM content c
+        JOIN favorites f ON c.id = f.content_id
+        WHERE f.user_id = ?
+        AND c.type = ?
+        ORDER BY RANDOM()
+        LIMIT 1
+    """, (user_id, content_type)).fetchone()
+
+    source_type = "favorite"
+
+    # Fallback to reviews
+    if not source:
+        source = db.execute("""
+            SELECT c.id, c.title, c.genres, c.type
+            FROM content c
+            JOIN reviews r ON c.id = r.content_id
+            WHERE r.user_id = ?
+            AND r.rating >= 4
+            AND c.type = ?
+            ORDER BY RANDOM()
+            LIMIT 1
+        """, (user_id, content_type)).fetchone()
+
+        source_type = "review"
+
+    if not source:
+        return jsonify({"items": []})
+
+    genres = [g.strip() for g in source["genres"].split(",")]
+
+    query = """
+        SELECT *
+        FROM content
+        WHERE type = ?
+        AND id != ?
+        AND id NOT IN (
+            SELECT content_id FROM favorites WHERE user_id = ?
+        )
+        AND id NOT IN (
+            SELECT content_id FROM reviews WHERE user_id = ?
+        )
+        AND (
+    """
+
+    params = [source["type"], source["id"], user_id, user_id]
+
+    genre_conditions = []
+    for g in genres:
+        genre_conditions.append("genres LIKE ?")
+        params.append(f"%{g}%")
+
+    query += " OR ".join(genre_conditions)
+    query += ") ORDER BY RANDOM() LIMIT 10"
+
+    items = db.execute(query, params).fetchall()
+
+    if not items:
+        items = db.execute("""
+            SELECT *
+            FROM content
+            WHERE type = ?
+            AND id != ?
+            ORDER BY RANDOM()
+            LIMIT 10
+        """, (source["type"], source["id"])).fetchall()
+
+    return jsonify({
+        "source_title": source["title"],
+        "source_type": source_type,
+        "items": [dict(i) for i in items]
+    })
+    
 
 @app.route("/api/out-of-comfort/<content_type>")
 def out_of_comfort(content_type):
@@ -568,11 +655,22 @@ def admin_picks():
         content=content,
         picks_map=picks_map
     )
-
+    
+    
 @app.route("/api/reviews/<int:content_id>")
 def get_reviews(content_id):
+    sort = request.args.get("sort", "newest")
+
+    order_clause = "r.created_at DESC"
+
+    if sort == "highest":
+        order_clause = "r.rating DESC"
+    elif sort == "lowest":
+        order_clause = "r.rating ASC"
+
     db = get_db()
-    rows = db.execute("""
+
+    rows = db.execute(f"""
         SELECT r.*,
                u.username,
                u.avatar_type,
@@ -580,31 +678,10 @@ def get_reviews(content_id):
         FROM reviews r
         JOIN users u ON r.user_id = u.id
         WHERE r.content_id = ?
-        ORDER BY r.created_at DESC
+        ORDER BY {order_clause}
     """, (content_id,)).fetchall()
 
     return jsonify([dict(row) for row in rows])
-
-@app.route("/add-review", methods=["POST"])
-def add_review():
-    if "user_id" not in session:
-        return jsonify({"error": "login required"}), 401
-
-    data = request.json
-    db = get_db()
-
-    db.execute("""
-        INSERT INTO reviews (user_id, content_id, rating, comment)
-        VALUES (?, ?, ?, ?)
-    """, (
-        session["user_id"],
-        data["content_id"],
-        data["rating"],
-        data["comment"]
-    ))
-
-    db.commit()
-    return jsonify({"success": True})
 
 @app.route("/edit-review/<int:review_id>", methods=["POST"])
 def edit_review(review_id):
@@ -653,6 +730,28 @@ def delete_review(review_id):
 
     return jsonify({"success": True})
 
+@app.route("/add-review", methods=["POST"])
+def add_review():
+    if "user_id" not in session:
+        return jsonify({"error": "login required"}), 401
+
+    data = request.json
+    db = get_db()
+
+    db.execute("""
+        INSERT INTO reviews (user_id, content_id, rating, comment)
+        VALUES (?, ?, ?, ?)
+    """, (
+        session["user_id"],
+        data["content_id"],
+        data["rating"],
+        data["comment"]
+    ))
+
+    db.commit()
+    return jsonify({"success": True})
+
+
 @app.context_processor
 def inject_user():
     if 'user_id' in session:
@@ -686,18 +785,33 @@ def profile():
     reviews = db.execute("""
         SELECT r.*, 
                c.title,
-               c.poster_url
+               c.poster_url,
+               c.type
         FROM reviews r
         JOIN content c ON r.content_id = c.id
         WHERE r.user_id = ?
         ORDER BY r.created_at DESC
+    """, (session["user_id"],)).fetchall()
+    
+    top_rated = db.execute("""
+        SELECT
+            c.id as content_id,
+            c.title,
+            c.poster_url,
+            r.rating
+        FROM reviews r
+        JOIN content c ON r.content_id = c.id
+        WHERE r.user_id = ?
+        ORDER BY r.rating DESC, r.created_at DESC
+        LIMIT 6
     """, (session["user_id"],)).fetchall()
 
     return render_template(
         "profile.html",
         user=user,
         favorites=favorites,
-        reviews=reviews
+        reviews=reviews,
+        top_rated=top_rated
     )
 
 @app.route("/set-avatar", methods=["POST"])

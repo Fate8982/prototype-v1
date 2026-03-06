@@ -70,13 +70,27 @@
             Please <a href="/login">login</a> to write a review.
         </p>
     {% endif %}
+    
+    <div class="reviews-topbar">
+        <h3 class="reviews-count">User Reviews</h3>
+
+        <div class="review-sort-buttons">
+            <button data-sort="newest" class="active">Newest</button>
+            <button data-sort="highest">Highest Rated</button>
+            <button data-sort="lowest">Lowest Rated</button>
+        </div>
+    </div>
 
     <div id="reviewsContainer"></div>
+
 </section>
 
 <script>
+const contentId = {{ content.id | tojson }};
+</script>
+
+<script>
 const favBtn = document.getElementById("fav-btn");
-const contentId = favBtn.dataset.contentId;
 let isFavorite = false;
 
 // 🔹 initial status check
@@ -129,13 +143,16 @@ favBtn.addEventListener("click", async () => {
 });
 
 // ================= REVIEWS =================
-const currentUserId = {{ session.get("user_id") | tojson }};
+document.addEventListener("DOMContentLoaded", () => {
 
-// ================= LOAD REVIEWS =================
+const currentUserId = {{ session.get("user_id") | tojson }};
+let currentSort = "newest";
 
 function loadReviews() {
 
-    fetch(`/api/reviews/${contentId}`)
+    const sort = document.getElementById("reviewSort")?.value || "newest";
+
+    fetch(`/api/reviews/${contentId}?sort=${currentSort}`)
         .then(res => res.json())
         .then(data => {
 
@@ -184,7 +201,34 @@ function loadReviews() {
         });
 }
 
+const reviewSort = document.getElementById("reviewSort");
+
+if (reviewSort) {
+    reviewSort.addEventListener("change", () => {
+        loadReviews();
+    });
+}
+
 loadReviews();
+
+document.querySelectorAll(".review-sort-buttons button")
+.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        document
+        .querySelectorAll(".review-sort-buttons button")
+        .forEach(b => b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        currentSort = btn.dataset.sort;
+
+        loadReviews();
+
+    });
+
+});
 
 
 // ================= CLICK HANDLER =================
@@ -364,6 +408,7 @@ if (stars.length > 0) {
         }
     });
 }
+});
 
 </script>
 

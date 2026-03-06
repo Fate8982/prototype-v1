@@ -199,6 +199,27 @@
         <div class="horizontal-row" id="recommendedRow"></div>
     </section>
 
+    <!-- Because You Liked -->
+    <section class="row-section hidden" id="becauseLikedSection">
+
+        <h2 id="becauseLikedTitle">✨ Because You Liked</h2>
+
+        <div class="recommended-meta">
+
+            <p class="recommended-reason" id="becauseLikedReason"></p>
+
+            <div class="why-container">
+                <span class="why-icon">?</span>
+
+                <div class="why-tooltip" id="becauseWhyTooltip">
+                    <!-- filled by JS -->
+                </div>
+            </div>
+        </div>
+        <div id="becauseLikedRow" class="horizontal-row"></div>
+
+    </section>
+
 
     <!-- Out of Comfort Zone -->
     <section class="row-section">
@@ -529,6 +550,7 @@ updateSpotlight();
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchRecommended();
+    fetchBecauseLiked();
 });
 
 function fetchRecommended() {
@@ -602,6 +624,66 @@ function renderRecommended(items) {
 
         row.appendChild(card);
     });
+}
+
+function fetchBecauseLiked() {
+
+    const contentType = "{{ content_type }}";
+
+    fetch(`/api/because-you-liked?type=${contentType}`)
+        .then(res => res.json())
+        .then(data => {
+
+            if (!data.items || data.items.length === 0) return;
+
+            const section = document.getElementById("becauseLikedSection");
+            const row = document.getElementById("becauseLikedRow");
+
+            const reasonEl = document.getElementById("becauseLikedReason");
+            const tooltip = document.getElementById("becauseWhyTooltip");
+
+            if (!section || !row) return;
+
+            section.classList.remove("hidden");
+            row.innerHTML = "";
+
+            // Dynamic title
+            if (data.source_type === "review") {
+                document.getElementById("becauseLikedTitle").textContent =
+                    `✨ Because you rated ${data.source_title} highly`;
+            } else {
+                document.getElementById("becauseLikedTitle").textContent =
+                    `✨ Because you liked ${data.source_title}`;
+            }
+
+            if (reasonEl) {
+                reasonEl.textContent =
+                    "Similar titles based on your favorites and highly rated content";
+            }
+
+            if (tooltip) {
+                tooltip.innerHTML =
+                    "We picked something you liked and found similar titles based on shared genres.";
+            }
+
+            data.items.forEach(item => {
+
+                const card = document.createElement("a");
+                card.href = `/content/${item.id}`;
+                card.className = "card";
+
+                card.innerHTML = `
+                    <img src="${item.poster_url}" alt="${item.title}">
+                    <p>${item.title}</p>
+                `;
+
+                row.appendChild(card);
+
+            });
+
+            autoScrollRow("becauseLikedRow");
+
+        });
 }
 
 // ================= OUT OF YOUR COMFORT ZONE =================
