@@ -82,5 +82,7 @@
 --     FOREIGN KEY(user_id) REFERENCES users(id),
 --     FOREIGN KEY(content_id) REFERENCES content(id)
 -- );
-ALTER TABLE users ADD COLUMN avatar_type TEXT DEFAULT 'default';
-ALTER TABLE users ADD COLUMN avatar_value TEXT DEFAULT 'avatar1.png';
+-- ALTER TABLE users ADD COLUMN avatar_type TEXT DEFAULT 'default';
+-- ALTER TABLE users ADD COLUMN avatar_value TEXT DEFAULT 'avatar1.png';
+
+-- ALTER TABLE users ADD COLUMN preferred_world TEXT;

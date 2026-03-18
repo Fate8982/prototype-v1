@@ -1,0 +1,171 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* 🔥 THIS FIXES THE CUT */
+}
+
+.welcome-page {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    color: white;
+}
+
+.bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100vw;   /* 🔥 use viewport */
+    height: 100vh;
+
+    object-fit: cover;
+
+    z-index: 0;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.7),
+        rgba(0,0,0,0.9)
+    );
+
+    z-index: 1;
+}
+
+.welcome-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    padding: 20px 30px; /* reduce from 40 */
+
+    box-sizing: border-box; /* 🔥 prevents overflow */
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    z-index: 20;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #a855f7;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    max-width: 100%; /* safety */
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+
+    object-fit: cover; /* 🔥 important */
+}
+
+.nav-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+
+    color: white;
+    text-decoration: none;
+
+    white-space: nowrap; /* 🔥 prevents text cutting */
+}
+
+.hero {
+    position: relative;
+    z-index: 5;
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 700;
+
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+    margin-top: 10px;
+    opacity: 0.8;
+    font-size: 1.2rem;
+}
+
+.world-buttons {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+}
+
+.world-btn {
+    padding: 14px 40px;
+    border-radius: 30px;
+
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    text-decoration: none;
+    color: white;
+
+    transition: all 0.3s ease;
+}
+
+.anime {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+.movies {
+    background: linear-gradient(135deg, #ec4899, #f43f5e);
+}
+
+.world-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.about {
+    background: #0b0f1a;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.about h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.about p {
+    max-width: 600px;
+    margin: auto;
+    opacity: 0.7;
+    line-height: 1.6;
+}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="/static/css/welcome.css">
+</head>
+<div class="welcome-page">
+
+    <!-- 🎬 BACKGROUND VIDEO -->
+    <video autoplay muted loop class="bg-video">
+        <source src="/static/videos/foryouamv.mp4" type="video/mp4">
+    </video>
+
+    <div class="overlay"></div>
+
+    <!-- 🧭 NAVBAR -->
+    <nav class="welcome-nav">
+        <div class="logo">NextWatch</div>
+
+        <div class="nav-right">
+            {% if user %}
+                <img src="/static/{{ user.avatar_value }}" class="avatar">
+                <a href="/logout" class="nav-btn">Logout</a>
+            {% else %}
+                <a href="/login" class="nav-btn">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- 🎯 HERO -->
+    <div class="hero">
+
+        <h1>NextWatch</h1>
+        <p class="tagline">Discover your next favorite story</p>
+
+        <div class="world-buttons">
+            <a href="/set-world/anime" class="world-btn anime">Animes</a>
+            <a href="/set-world/movie" class="world-btn movies">Movies</a>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 📖 ABOUT SECTION -->
+<section class="about">
+    <h2>What is NextWatch?</h2>
+    <p>
+        NextWatch helps you discover movies and anime tailored to your taste.
+        From trending hits to hidden gems, we make sure you always find something worth watching.
+    </p>
+</section>
+
+
+{% endblock %}

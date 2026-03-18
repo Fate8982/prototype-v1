@@ -491,3 +491,42 @@
     transform: scale(1.08);
 
 }
+
+.profile-section {
+    margin-top: 30px;
+}
+
+.world-switch {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.world-btn {
+    padding: 10px 24px;
+    border-radius: 25px;
+
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    transition: 0.3s ease;
+}
+
+.world-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(168,85,247,0.6);
+}
+
+.switch-world-section {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.world-switch {
+    display: flex;
+    justify-content: center; /* 🔥 centers buttons */
+    gap: 15px;
+    margin-top: 10px;
+}

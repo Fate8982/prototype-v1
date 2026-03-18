@@ -75,6 +75,22 @@
     </div>
 </div>
 
+<div class="switch-world-section">
+
+    <h3>Switch Worlds</h3>
+    <h6>(Your default login page)</h6>
+    <!-- <h4>Currently Exploring: <span class="current-world">{{ user.preferred_world|capitalize }}</span></h4> -->
+
+    <div class="world-switch">
+        <a href="/set-world/anime" class="world-btn {% if user.preferred_world == 'anime' %}active{% endif %}">
+            Animes
+        </a>
+        <a href="/set-world/movie" class="world-btn {% if user.preferred_world == 'movie' %}active{% endif %}">
+            Movies
+        </a>
+    </div>
+
+</div>
 
     <div class="profile-section">
         <h3>⭐ Your Favorites</h3>
@@ -182,6 +198,12 @@
 
 </section>
 
+{% if show_toast %}
+<div class="toast success-toast show" id="prefToast">
+    <span class="toast-icon">🎉</span>
+    <span>Preference saved! Your world has been updated.</span>
+</div>
+{% endif %}
 
 <script>
 const modal = document.getElementById("avatarModal");
@@ -341,6 +363,15 @@ document
     });
 
 });
+</script>
+
+<script>
+setTimeout(() => {
+    const toast = document.getElementById("prefToast");
+    if (toast) {
+        toast.classList.remove("show");
+    }
+}, 3000);
 </script>
 
 {% endblock %}

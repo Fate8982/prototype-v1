@@ -196,7 +196,12 @@ def login():
             return redirect("/select-genres")
 
 
-        return redirect("/")
+        preferred = user["preferred_world"]
+
+        if preferred:
+            return redirect(f"/{preferred}")
+
+        return redirect("/welcome")
 
     
     return render_template("login.html")
@@ -205,7 +210,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect("/welcome")
 
 SPOTLIGHT_VIDEO_MAP = {
     202:"/static/videos/frieren.mp4",
@@ -345,14 +350,33 @@ def api_get_favorites():
 
 @app.route("/")
 def home():
-    content_type = request.args.get("type", "anime")
+
+    # 👻 If NOT logged in AND no type selected → go to welcome
+    if "user_id" not in session and not request.args.get("type"):
+        return redirect("/welcome")
+
+    db = get_db()
+    content_type = request.args.get("type")
+
+    # 👤 Logged-in user → DB preference fallback
+    if "user_id" in session:
+        user = db.execute(
+            "SELECT preferred_world FROM users WHERE id = ?",
+            (session["user_id"],)
+        ).fetchone()
+
+        if not content_type:
+            content_type = user["preferred_world"] if user and user["preferred_world"] else "anime"
+
+    # 👻 Guest fallback (AFTER welcome selection)
+    else:
+        if not content_type:
+            content_type = "anime"
 
     trending = get_trending_by_genres(content_type)
     popular = get_popular_by_genres(content_type)
     top_rated = get_top_rated(content_type)
 
-
-    # 🔔 pop the toast flag (shows once)
     show_toast = session.pop("preferences_saved", None)
 
     return render_template(
@@ -364,6 +388,63 @@ def home():
         show_toast=show_toast
     )
 
+@app.route("/anime")
+def anime_home():
+
+    content_type = "anime"
+
+    trending = get_trending_by_genres(content_type)
+    popular = get_popular_by_genres(content_type)
+    top_rated = get_top_rated(content_type)
+
+    show_toast = session.pop("preferences_saved", None)
+
+    return render_template(
+        "home.html",
+        trending=trending,
+        popular=popular,
+        top_rated=top_rated,
+        content_type=content_type,
+        show_toast=show_toast
+    )
+
+
+@app.route("/movie")
+def movie_home():
+
+    content_type = "movie"
+
+    trending = get_trending_by_genres(content_type)
+    popular = get_popular_by_genres(content_type)
+    top_rated = get_top_rated(content_type)
+
+    show_toast = session.pop("preferences_saved", None)
+
+    return render_template(
+        "home.html",
+        trending=trending,
+        popular=popular,
+        top_rated=top_rated,
+        content_type=content_type,
+        show_toast=show_toast
+    )
+    
+@app.route("/set-world/<world>")
+def set_world(world):
+
+    if "user_id" in session:
+        db = get_db()
+
+        db.execute(
+            "UPDATE users SET preferred_world = ? WHERE id = ?",
+            (world, session["user_id"])
+        )
+        db.commit()
+
+        # ✅ trigger toast
+        session["preferences_saved"] = True
+
+    return redirect(f"/?type={world}")
 
 
 @app.route("/content/<int:content_id>")
@@ -765,6 +846,7 @@ def profile():
         return redirect(url_for("login"))
 
     db = get_db()
+    show_toast=show_toast = session.pop("preferences_saved", None)
 
     # User
     user = db.execute(
@@ -811,7 +893,8 @@ def profile():
         user=user,
         favorites=favorites,
         reviews=reviews,
-        top_rated=top_rated
+        top_rated=top_rated,
+        show_toast=show_toast
     )
 
 @app.route("/set-avatar", methods=["POST"])
@@ -872,6 +955,15 @@ def upload_avatar():
         return {"success": True}
 
     return {"success": False, "error": "Invalid file type"}
+
+@app.route("/welcome")
+def welcome():
+
+    # if already selected once → skip welcome
+    if request.args.get("type"):
+        return redirect(f"/?type={request.args.get('type')}")
+
+    return render_template("welcome.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
