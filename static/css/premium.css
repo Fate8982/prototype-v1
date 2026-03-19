@@ -1,0 +1,195 @@
+.premium-page {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #0b0f1a, #020617);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* 🌌 CARD */
+.premium-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+
+    border-radius: 25px;
+    padding: 40px;
+
+    width: 400px;
+    text-align: center;
+
+    border: 1px solid rgba(255,255,255,0.1);
+
+    box-shadow: 
+        0 0 40px rgba(168,85,247,0.2),
+        0 0 80px rgba(236,72,153,0.1);
+}
+
+/* 🧠 TEXT */
+.premium-card h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    opacity: 0.7;
+    margin-bottom: 25px;
+}
+
+/* 💰 PRICE */
+.price-box {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 6px;
+
+    margin-bottom: 25px;
+}
+
+/* ₹ symbol */
+.currency {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d948ec;
+}
+
+/* main price */
+#price-value {
+    font-size: 2.8rem;
+    font-weight: bold;
+
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow: 0 0 15px rgba(168,85,247,0.4);
+}
+
+/* duration */
+#price-duration {
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+#price-value {
+    letter-spacing: 1px;
+}
+
+.price-box span {
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+/* ✨ FEATURES */
+.features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.feature {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 12px;
+
+    transition: 0.3s;
+}
+
+.feature:hover {
+    background: rgba(168,85,247,0.15);
+}
+
+/* 🔥 BUTTON */
+.premium-btn {
+    width: 100%;
+    padding: 14px;
+
+    border-radius: 30px;
+    border: none;
+
+    font-size: 1rem;
+    font-weight: bold;
+
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    color: white;
+
+    cursor: pointer;
+
+    box-shadow: 0 0 20px rgba(168,85,247,0.5);
+    transition: 0.3s;
+}
+
+.premium-btn:hover {
+    transform: scale(1.05);
+}
+
+/* 🧾 NOTE */
+.note {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+/* 🔁 TOGGLE */
+.billing-toggle {
+    position: relative;
+    display: inline-flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: 30px;
+    padding: 5px;
+    margin-bottom: 25px;
+}
+
+.toggle-pill {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 100px;
+    height: calc(100% - 10px);
+
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border-radius: 30px;
+
+    transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.toggle-option {
+    position: relative;
+    z-index: 2;
+    padding: 8px 20px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.toggle-option.active {
+    opacity: 1;
+}
+
+/* 💰 PRICE FIX */
+.price-box {
+    font-size: 2.5rem;
+    font-weight: bold;
+
+    display: flex;
+    justify-content: center;
+    align-items: baseline; /* 🔥 fixes alignment */
+    gap: 5px;
+
+    /* background: linear-gradient(90deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; */
+
+    margin-bottom: 25px;
+}
+
+#price-duration {
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+#price-value {
+    transition: all 0.3s ease;
+}

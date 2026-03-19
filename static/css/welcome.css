@@ -169,3 +169,278 @@ html, body {
     opacity: 0.7;
     line-height: 1.6;
 }
+
+/* 💎 PREMIUM SECTION */
+
+.premium {
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    padding: 100px 20px;
+    text-align: center;
+    color: white;
+}
+
+.premium h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.premium-sub {
+    opacity: 0.7;
+    margin-bottom: 40px;
+}
+
+/* 🔁 TOGGLE */
+.billing-toggle {
+    display: inline-flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: 30px;
+    padding: 5px;
+    margin-bottom: 50px;
+}
+
+.billing-toggle span {
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.billing-toggle .active {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    opacity: 1;
+}
+
+/* 💳 PLANS */
+.plans {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.plan {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 30px;
+    width: 280px;
+
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+
+    position: relative;
+    transition: 0.3s;
+}
+
+.plan:hover {
+    transform: translateY(-10px);
+}
+
+/* 🆓 FREE */
+.free {
+    opacity: 0.8;
+}
+
+/* ⭐ PREMIUM */
+.premium-plan {
+    border: 1px solid rgba(168,85,247,0.6);
+    box-shadow: 0 0 25px rgba(168,85,247,0.3);
+}
+
+/* 🔥 TAG */
+.tag {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+
+    background: linear-gradient(135deg, #facc15, #f97316);
+    color: black;
+
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+/* TEXT */
+.plan h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.price span {
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+/* LIST */
+.plan ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.plan ul li {
+    margin: 10px 0;
+    opacity: 0.8;
+}
+
+/* BUTTONS */
+.plan-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 25px;
+
+    text-decoration: none;
+    color: white;
+
+    background: rgba(255,255,255,0.1);
+    transition: 0.3s;
+}
+
+.plan-btn:hover {
+    transform: scale(1.05);
+}
+
+.highlight {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    box-shadow: 0 0 20px rgba(168,85,247,0.5);
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* NOTE */
+.note {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-top: 10px;
+}
+
+.premium {
+    animation: fadeInUp 1s ease;
+}
+
+
+.toggle-option {
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: 0.3s;
+}
+
+.toggle-option.active {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    opacity: 1;
+}
+
+.price {
+    transition: all 0.3s ease;
+}
+
+
+
+/* 🔥 PRICE ANIMATION */
+.price-animate {
+    animation: pricePop 0.35s ease;
+}
+
+@keyframes pricePop {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.price {
+    text-shadow: 0 0 10px rgba(168,85,247,0.5);
+}
+
+.billing-toggle {
+    position: relative;
+    display: inline-flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: 30px;
+    padding: 5px;
+    margin-bottom: 50px;
+}
+
+/* 🔥 Sliding pill */
+.toggle-pill {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+
+    width: 110px;
+    height: calc(100% - 10px);
+
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border-radius: 30px;
+
+    transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Options */
+.toggle-option {
+    position: relative;
+    z-index: 2;
+
+    padding: 10px 25px;
+    cursor: pointer;
+    color: white;
+    opacity: 0.7;
+    transition: 0.3s;
+}
+
+.toggle-option.active {
+    opacity: 1;
+}
+
+.price {
+    font-size: 2rem;
+    overflow: hidden;
+    height: 40px;
+    position: relative;
+}
+
+.price span {
+    display: inline-block;
+}
+
+/* Rolling effect */
+.roll {
+    display: inline-block;
+    animation: rollUp 0.4s ease;
+}
+
+@keyframes rollUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.premium-plan.active-glow {
+    box-shadow: 
+        0 0 25px rgba(168,85,247,0.4),
+        0 0 50px rgba(236,72,153,0.2);
+}

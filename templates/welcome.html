@@ -53,4 +53,109 @@
 </section>
 
 
+<!-- 💎 PREMIUM SECTION -->
+<section class="premium">
+
+    <h2>Upgrade to Premium</h2>
+    <p class="premium-sub">
+        Unlock smarter recommendations and powerful discovery tools
+    </p>
+
+<!-- 🔁 TOGGLE -->
+<div class="billing-toggle">
+    <div class="toggle-pill"></div>
+
+    <span class="toggle-option active" data-type="monthly">Monthly</span>
+    <span class="toggle-option" data-type="yearly">Yearly</span>
+</div>
+
+    <!-- 💳 PLANS -->
+    <div class="plans">
+
+        <!-- 🆓 FREE -->
+        <div class="plan free">
+            <h3>Free</h3>
+            <p class="price">₹0</p>
+
+            <ul>
+                <li>✔ Limited Recommendations</li>
+                <li>✔ Basic Filters</li>
+                <li>✔ Standard Profile</li>
+                <li>✔ Ads (future)</li>
+            </ul>
+
+            <button class="plan-btn disabled">Current Plan</button>
+        </div>
+
+        <!-- ⭐ PREMIUM -->
+        <div class="plan premium-plan">
+            <div class="tag">Most Popular</div>
+
+            <h3>Premium</h3>
+            <p class="price">
+                ₹<span id="price-value">49</span>
+                <span id="price-duration">/mo</span>
+            </p>
+
+            <ul>
+                <li>✨ Advanced AI Recommendations</li>
+                <li>🎭 Mood-Based Discovery</li>
+                <li>🔍 Unlimited Filters</li>
+                <li>📊 Taste Profile Insights</li>
+                <li>📺 Smart Watchlists</li>
+                <li>🎨 Premium Themes & Avatars</li>
+            </ul>
+
+            <a href="/premium?plan=monthly" id="premium-btn" class="plan-btn highlight">
+              pay now
+            </a>
+
+            <p class="note">Cancel anytime • No ads • Early access</p>
+        </div>
+
+    </div>
+</section>
+
+<script>
+const toggleOptions = document.querySelectorAll(".toggle-option");
+const togglePill = document.querySelector(".toggle-pill");
+
+const priceValue = document.getElementById("price-value");
+const priceDuration = document.getElementById("price-duration");
+
+const premiumCard = document.querySelector(".premium-plan");
+const premiumBtn = document.getElementById("premium-btn"); // 🔥 NEW
+
+toggleOptions.forEach((option, index) => {
+    option.addEventListener("click", () => {
+
+        // Active toggle
+        toggleOptions.forEach(o => o.classList.remove("active"));
+        option.classList.add("active");
+
+        // 🔥 Move sliding pill
+        togglePill.style.left = index === 0 ? "5px" : "50%";
+
+        // 🔥 Price logic
+        const type = option.getAttribute("data-type");
+
+        let newPrice = type === "monthly" ? "49" : "399";
+        let newDuration = type === "monthly" ? "/mo" : "/year";
+
+        // Animate price
+        priceValue.innerHTML = `<span class="roll">${newPrice}</span>`;
+        priceDuration.textContent = newDuration;
+
+        // 🔥 UPDATE BUTTON LINK (THIS IS THE IMPORTANT PART)
+        premiumBtn.href = `/premium?plan=${type}`;
+
+        // 🔥 Glow effect
+        premiumCard.classList.remove("active-glow");
+        void premiumCard.offsetWidth;
+        premiumCard.classList.add("active-glow");
+    });
+});
+</script>
+
+
 {% endblock %}

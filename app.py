@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import os
+import os 
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from utils.db import (
@@ -191,10 +192,14 @@ def login():
         # ✅ LOGIN SUCCESS
         session["user_id"] = user["id"]
 
-        # 🔥 STEP 3 IS EXACTLY THIS CHECK
+        # 🔥 NEW: CHECK IF USER WAS REDIRECTED
+        next_page = session.pop("next", None)
+        if next_page:
+            return redirect(next_page)
+
+        # 🔽 EXISTING LOGIC (UNCHANGED)
         if not user["preferred_genres"] or user["preferred_genres"].strip() == "":
             return redirect("/select-genres")
-
 
         preferred = user["preferred_world"]
 
@@ -203,7 +208,6 @@ def login():
 
         return redirect("/welcome")
 
-    
     return render_template("login.html")
 
 
@@ -964,6 +968,99 @@ def welcome():
         return redirect(f"/?type={request.args.get('type')}")
 
     return render_template("welcome.html")
+
+
+
+@app.route("/upgrade/<plan>")
+def upgrade(plan):
+    user_id = session.get("user_id")
+
+    # 🔐 Step 1 — Login check
+    if not user_id:
+        session["next"] = request.path
+        return redirect("/login")
+
+    # 🔥 Step 2 — Payment check (PUT IT HERE)
+    if not session.get("payment_done"):
+        return redirect(f"/payment?plan={plan}")
+
+    # 🔥 Step 3 — Clear flag (VERY IMPORTANT)
+    session.pop("payment_done", None)
+
+    # 🧠 Step 4 — Do actual upgrade
+    db = get_db()
+    cursor = db.cursor()
+
+    if plan == "monthly":
+        expiry = datetime.now() + timedelta(days=30)
+    else:
+        expiry = datetime.now() + timedelta(days=365)
+
+    cursor.execute("""
+        UPDATE users 
+        SET is_premium = 1,
+            premium_type = ?,
+            premium_expiry = ?
+        WHERE id = ?
+    """, (plan, expiry.strftime("%Y-%m-%d %H:%M:%S"), user_id))
+
+    db.commit()
+    db.close()
+
+    return redirect("/")
+
+
+@app.route("/premium")
+def premium_page():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        session["next"] = request.full_path
+        return redirect("/login")
+
+    plan = request.args.get("plan", "monthly")
+    return render_template("premium.html", selected_plan=plan)
+
+@app.route("/payment")
+def payment():
+    user_id = session.get("user_id")
+
+    # 🔐 FORCE LOGIN FIRST
+    if not user_id:
+        session["next"] = request.full_path
+        return redirect("/login")
+
+    plan = request.args.get("plan", "monthly")
+    return render_template("payment.html", plan=plan)
+
+# @app.route("/pay/<plan>")
+# def pay(plan):
+#     session["payment_done"] = True
+#     return redirect(f"/upgrade/{plan}")
+
+import razorpay
+
+client = razorpay.Client(auth=("rzp_test_ST2BdDGg6Z5fxw", "r0kXpsMSqwaiy4z0QIJfC8Dh"))
+
+@app.route("/create-order/<plan>")
+def create_order(plan):
+    amount = 4900 if plan == "monthly" else 39900  # paise
+
+    order = client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    return {
+        "order_id": order["id"],
+        "amount": amount
+    }
+    
+@app.route("/payment-success/<plan>")
+def payment_success(plan):
+    session["payment_done"] = True
+    return redirect(f"/upgrade/{plan}")
 
 if __name__ == "__main__":
     app.run(debug=True)

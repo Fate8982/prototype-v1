@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="/static/css/premium.css">
+</head>
+
+<section class="premium-page">
+
+    <div class="premium-card">
+
+        <h1>Unlock Premium</h1>
+        <p class="subtitle">
+            Get smarter recommendations tailored just for you
+        </p>
+
+        <!-- 🔁 TOGGLE -->
+        <div class="billing-toggle">
+            <div class="toggle-pill"></div>
+
+            <span class="toggle-option active" data-type="monthly">Monthly</span>
+            <span class="toggle-option" data-type="yearly">Yearly</span>
+        </div>
+
+        <div class="price-box">
+            <span class="currency">₹</span>
+            <span id="price-value">399</span>
+            <span id="price-duration">/year</span>
+        </div>
+
+        <!-- 🔥 FEATURES -->
+        <div class="features">
+            <div class="feature">✨ Advanced Recommendations</div>
+            <div class="feature">🎭 Mood-Based Discovery</div>
+            <div class="feature">🔍 Unlimited Filters</div>
+            <div class="feature">📊 Taste Profile Insights</div>
+        </div>
+
+        <!-- 🔥 MAIN BUTTON -->
+        <button id="rzp-button" class="premium-btn" data-plan="monthly">
+            Pay Now
+        </button>
+
+        <p class="note">Secure payment via Razorpay • Cancel anytime</p>
+
+    </div>
+
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // ✅ FIRST: get elements
+    const toggleOptions = document.querySelectorAll(".toggle-option");
+    const togglePill = document.querySelector(".toggle-pill");
+
+    const priceValue = document.getElementById("price-value");
+    const priceDuration = document.getElementById("price-duration");
+
+    const rzpButton = document.getElementById("rzp-button");
+
+    const initialPlan = "{{ selected_plan }}";
+
+    // ✅ THEN: set initial state
+    if (initialPlan === "yearly") {
+        priceValue.textContent = "399";
+        priceDuration.textContent = "/year";
+
+        togglePill.style.left = "50%";
+
+        toggleOptions.forEach(o => o.classList.remove("active"));
+        document.querySelector('[data-type="yearly"]').classList.add("active");
+
+        rzpButton.dataset.plan = "yearly";
+    } else {
+        priceValue.textContent = "49";
+        priceDuration.textContent = "/month";
+
+        rzpButton.dataset.plan = "monthly";
+    }
+
+    // ✅ Toggle logic
+    toggleOptions.forEach((option, index) => {
+        option.addEventListener("click", () => {
+
+            toggleOptions.forEach(o => o.classList.remove("active"));
+            option.classList.add("active");
+
+            togglePill.style.left = index === 0 ? "5px" : "50%";
+
+            const type = option.dataset.type;
+
+            if (type === "monthly") {
+                priceValue.textContent = "49";
+                priceDuration.textContent = "/month";
+            } else {
+                priceValue.textContent = "399";
+                priceDuration.textContent = "/year";
+            }
+
+            rzpButton.dataset.plan = type;
+        });
+    });
+
+    // ✅ Razorpay handler
+    rzpButton.onclick = async function() {
+
+        const plan = this.dataset.plan || "monthly";
+
+        const res = await fetch(`/create-order/${plan}`);
+        const data = await res.json();
+
+        const options = {
+            key: "rzp_test_ST2BdDGg6Z5fxw",
+            amount: data.amount,
+            currency: "INR",
+            name: "NextWatch",
+            description: "Premium Subscription",
+            order_id: data.order_id,
+
+            handler: function () {
+                window.location.href = `/payment-success/${plan}`;
+            },
+
+            theme: { color: "#a855f7" }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+    };
+
+});
+</script>
+
+{% endblock %}

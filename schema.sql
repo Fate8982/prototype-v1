@@ -86,3 +86,7 @@
 -- ALTER TABLE users ADD COLUMN avatar_value TEXT DEFAULT 'avatar1.png';
 
 -- ALTER TABLE users ADD COLUMN preferred_world TEXT;
+
+ALTER TABLE users ADD COLUMN is_premium INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN premium_type TEXT;
+ALTER TABLE users ADD COLUMN premium_expiry DATETIME;
