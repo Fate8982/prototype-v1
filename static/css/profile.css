@@ -530,3 +530,12 @@
     gap: 15px;
     margin-top: 10px;
 }
+
+.premium-badge {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    font-size: 0.8rem;
+}

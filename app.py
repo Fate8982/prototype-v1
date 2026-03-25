@@ -1062,5 +1062,26 @@ def payment_success(plan):
     session["payment_done"] = True
     return redirect(f"/upgrade/{plan}")
 
+@app.route("/cancel-membership")
+def cancel_membership():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect("/login")
+
+    db = get_db()
+
+    db.execute("""
+        UPDATE users
+        SET is_premium = 0,
+            premium_type = NULL,
+            premium_expiry = NULL
+        WHERE id = ?
+    """, (user_id,))
+
+    db.commit()
+
+    return redirect("/profile")
+
 if __name__ == "__main__":
     app.run(debug=True)

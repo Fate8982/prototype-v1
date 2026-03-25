@@ -193,3 +193,104 @@
 #price-value {
     transition: all 0.3s ease;
 }
+
+.premium-btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.manage-btn {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* 🔥 OVERLAY */
+.cancel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 999;
+}
+
+/* SHOW */
+.cancel-overlay.active {
+    display: flex;
+}
+
+/* 🧊 MODAL */
+.cancel-modal {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+
+    padding: 30px;
+    border-radius: 20px;
+
+    width: 350px;
+    text-align: center;
+
+    border: 1px solid rgba(255,255,255,0.1);
+
+    box-shadow:
+        0 0 30px rgba(168,85,247,0.3),
+        0 0 60px rgba(236,72,153,0.2);
+
+    position: relative;
+}
+
+/* ❌ CLOSE BUTTON */
+.cancel-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* 🔘 BUTTONS */
+.cancel-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.cancel-danger {
+    background: #ef4444;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.cancel-safe {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.cancel-modal {
+    animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.hidden {
+    display: none;
+}

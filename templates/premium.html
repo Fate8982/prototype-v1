@@ -38,13 +38,78 @@
         </div>
 
         <!-- 🔥 MAIN BUTTON -->
-        <button id="rzp-button" class="premium-btn" data-plan="monthly">
-            Pay Now
-        </button>
+        {% if user["is_premium"] == 1 %}
+
+            {% if user["premium_type"] == "yearly" %}
+                <!-- Already on highest plan -->
+                <button class="premium-btn disabled">
+                    Current Plan ✅
+                </button>
+
+            {% elif user["premium_type"] == "monthly" %}
+                <!-- Can upgrade -->
+                <button id="rzp-button" class="premium-btn" data-plan="yearly">
+                    Upgrade to Yearly 🚀
+                </button>
+            {% endif %}
+
+            <!-- Manage ONLY for premium -->
+            <button class="manage-btn" onclick="openManageModal()">
+                Manage Membership
+            </button>
+
+        {% else %}
+            <!-- Free user -->
+            <button id="rzp-button" class="premium-btn" data-plan="monthly">
+                Pay Now
+            </button>
+        {% endif %}
 
         <p class="note">Secure payment via Razorpay • Cancel anytime</p>
 
+    {% if user["is_premium"] == 1 %}
+
+    <div class="cancel-overlay" id="cancelModal">
+
+        <!-- STEP 1 -->
+        <div class="cancel-modal" id="cancelStep1">
+            <span class="cancel-close" onclick="closeManageModal()">✕</span>
+
+            <h2>😢 Leaving us already?</h2>
+            <p>Your recommendations will miss you...</p>
+
+            <div class="cancel-actions">
+                <button class="cancel-danger" onclick="goToStep2()">
+                    Yes, Cancel
+                </button>
+
+                <button class="cancel-safe" onclick="closeManageModal()">
+                    No, I’ll Stay ❤️
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2 (DOUBLE CONFIRM) -->
+        <div class="cancel-modal hidden" id="cancelStep2">
+            <span class="cancel-close" onclick="closeManageModal()">✕</span>
+
+            <h2>💔 Are you REALLY sure?</h2>
+            <p>This will remove all your premium powers 😭</p>
+
+            <div class="cancel-actions">
+                <button class="cancel-danger" onclick="cancelMembership()">
+                    Yes… I'm sure 😔
+                </button>
+
+                <button class="cancel-safe" onclick="backToStep1()">
+                    Wait, take me back 😭
+                </button>
+            </div>
+        </div>
     </div>
+    {% endif %}
+    </div>
+
 
 </section>
 
@@ -53,7 +118,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ✅ FIRST: get elements
+    // 🔹 Elements
     const toggleOptions = document.querySelectorAll(".toggle-option");
     const togglePill = document.querySelector(".toggle-pill");
 
@@ -64,75 +129,112 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const initialPlan = "{{ selected_plan }}";
 
-    // ✅ THEN: set initial state
-    if (initialPlan === "yearly") {
-        priceValue.textContent = "399";
-        priceDuration.textContent = "/year";
+    // 🔹 Safety
+    if (!priceValue || !priceDuration || !togglePill) return;
 
-        togglePill.style.left = "50%";
+    // 🔹 UI ONLY (no premium logic)
+    function setPlanUI(plan) {
 
+        if (plan === "yearly") {
+            priceValue.textContent = "399";
+            priceDuration.textContent = "/year";
+            togglePill.style.left = "50%";
+        } else {
+            priceValue.textContent = "49";
+            priceDuration.textContent = "/month";
+            togglePill.style.left = "5px";
+        }
+
+        // Active toggle
         toggleOptions.forEach(o => o.classList.remove("active"));
-        document.querySelector('[data-type="yearly"]').classList.add("active");
+        const activeBtn = document.querySelector(`[data-type="${plan}"]`);
+        if (activeBtn) activeBtn.classList.add("active");
 
-        rzpButton.dataset.plan = "yearly";
-    } else {
-        priceValue.textContent = "49";
-        priceDuration.textContent = "/month";
-
-        rzpButton.dataset.plan = "monthly";
+        // ONLY update dataset (no logic)
+        if (rzpButton) {
+            rzpButton.dataset.plan = plan;
+        }
     }
 
-    // ✅ Toggle logic
-    toggleOptions.forEach((option, index) => {
+    // 🔹 Init
+    setPlanUI(initialPlan || "monthly");
+
+    // 🔹 Toggle click
+    toggleOptions.forEach(option => {
         option.addEventListener("click", () => {
-
-            toggleOptions.forEach(o => o.classList.remove("active"));
-            option.classList.add("active");
-
-            togglePill.style.left = index === 0 ? "5px" : "50%";
-
-            const type = option.dataset.type;
-
-            if (type === "monthly") {
-                priceValue.textContent = "49";
-                priceDuration.textContent = "/month";
-            } else {
-                priceValue.textContent = "399";
-                priceDuration.textContent = "/year";
-            }
-
-            rzpButton.dataset.plan = type;
+            const plan = option.dataset.type;
+            setPlanUI(plan);
         });
     });
 
-    // ✅ Razorpay handler
-    rzpButton.onclick = async function() {
+    // 🔹 Razorpay
+    if (rzpButton) {
+        rzpButton.addEventListener("click", async function () {
 
-        const plan = this.dataset.plan || "monthly";
+            const plan = this.dataset.plan || "monthly";
 
-        const res = await fetch(`/create-order/${plan}`);
-        const data = await res.json();
+            try {
+                const res = await fetch(`/create-order/${plan}`);
+                const data = await res.json();
 
-        const options = {
-            key: "rzp_test_ST2BdDGg6Z5fxw",
-            amount: data.amount,
-            currency: "INR",
-            name: "NextWatch",
-            description: "Premium Subscription",
-            order_id: data.order_id,
+                const options = {
+                    key: "rzp_test_ST2BdDGg6Z5fxw",
+                    amount: data.amount,
+                    currency: "INR",
+                    name: "NextWatch",
+                    description: "Premium Subscription",
+                    order_id: data.order_id,
 
-            handler: function () {
-                window.location.href = `/payment-success/${plan}`;
-            },
+                    handler: function () {
+                        window.location.href = `/payment-success/${plan}`;
+                    },
 
-            theme: { color: "#a855f7" }
-        };
+                    theme: { color: "#a855f7" }
+                };
 
-        const rzp = new Razorpay(options);
-        rzp.open();
-    };
+                const rzp = new Razorpay(options);
+                rzp.open();
+
+            } catch (err) {
+                console.error("Payment error:", err);
+                alert("Something went wrong. Try again.");
+            }
+        });
+    }
 
 });
+</script>
+
+<script>
+// 🔹 Manage modal
+function openManageModal() {
+    const modal = document.getElementById("cancelModal");
+    const step1 = document.getElementById("cancelStep1");
+    const step2 = document.getElementById("cancelStep2");
+
+    modal.classList.add("active");
+    step1.classList.remove("hidden");
+    step2.classList.add("hidden");
+}
+
+function closeManageModal() {
+    const modal = document.getElementById("cancelModal");
+    modal.classList.remove("active");
+}
+
+function goToStep2() {
+    document.getElementById("cancelStep1").classList.add("hidden");
+    document.getElementById("cancelStep2").classList.remove("hidden");
+}
+
+function backToStep1() {
+    document.getElementById("cancelStep2").classList.add("hidden");
+    document.getElementById("cancelStep1").classList.remove("hidden");
+}
+
+function cancelMembership() {
+    window.location.href = "/cancel-membership";
+}
 </script>
 
 {% endblock %}

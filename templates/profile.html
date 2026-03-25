@@ -18,7 +18,13 @@
         </div>
 
         <h2>{{ user.username }}</h2>
-        <p class="join-date">Member of NextWatch</p>
+        <p class="join-date">
+            {% if user["is_premium"] %}
+                <span class="premium-badge">⭐ Premium Member</span>
+            {% else %}
+                Member of NextWatch
+            {% endif %}
+        </p>
 
         <button class="edit-avatar-btn">Edit Avatar</button>
     </div>
