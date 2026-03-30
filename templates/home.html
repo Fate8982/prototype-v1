@@ -50,9 +50,9 @@
         <!-- SEARCH BUTTON -->
         <button type="submit" class="search-btn">🔍</button>
     </form>
- <!-- Dark mode toggle -->
-    <button id="themeToggle" class="theme-toggle" title="Toggle theme">
-        🌙
+ <!-- filter toggle -->
+    <button id="filterToggle" class="theme-toggle" title="Filters">
+        ⬇️
     </button>
 </div>
 
@@ -81,6 +81,79 @@
     </div>
 
 </header>
+
+<div id="filterPanel" class="filter-panel hidden">
+
+    <div id="activeFilters" class="active-filters hidden">
+        <button id="clearAllBtn" class="clear-all-btn hidden">Clear All</button>
+    </div>
+
+    <div class="filter-grid">
+
+        <!-- GENRE -->
+        <div class="filter-box">
+            <label>Genres</label>
+            <div class="custom-dropdown" id="genreDropdown">
+                <div class="dropdown-selected" id="genreSelected">
+                    Any
+                </div>
+
+                <div class="dropdown-list hidden" id="genreList">
+                    <div class="dropdown-item" data-value="Action">Action</div>
+                    <div class="dropdown-item" data-value="Adventure">Adventure</div>
+                    <div class="dropdown-item" data-value="Drama">Drama</div>
+                    <div class="dropdown-item" data-value="Comedy">Comedy</div>
+                    <div class="dropdown-item" data-value="Fantasy">Fantasy</div>
+                    <div class="dropdown-item" data-value="Romance">Romance</div>
+                    <div class="dropdown-item" data-value="Horror">Horror</div>
+                    <div class="dropdown-item" data-value="Sci-Fi">Sci-Fi</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- YEAR -->
+        <div class="filter-box">
+            <label>Year</label>
+            <div class="custom-dropdown" id="yearDropdown">
+                <div class="dropdown-selected" id="yearSelected">Any</div>
+
+                <div class="dropdown-list hidden" id="yearList">
+                    <div class="dropdown-item" data-start="" data-end="">Any</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RATING -->
+        <div class="filter-box">
+            <label>Rating</label>
+            <div class="custom-dropdown" id="ratingDropdown">
+                <div class="dropdown-selected" id="ratingSelected">Any</div>
+
+                <div class="dropdown-list hidden" id="ratingList">
+                    <div class="dropdown-item" data-value="">Any</div>
+                    <div class="dropdown-item" data-value="4">4+</div>
+                    <div class="dropdown-item" data-value="3">3+</div>
+                    <div class="dropdown-item" data-value="2">2+</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SORT -->
+        <div class="filter-box">
+            <label>Sort</label>
+            <div class="custom-dropdown" id="sortDropdown">
+                <div class="dropdown-selected" id="sortSelected">Top Rated</div>
+
+                <div class="dropdown-list hidden" id="sortList">
+                    <div class="dropdown-item" data-value="rating_desc">Top Rated</div>
+                    <div class="dropdown-item" data-value="rating_asc">Lowest Rated</div>
+                    <div class="dropdown-item" data-value="popular">Most Popular</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <main class="page-content">
@@ -311,68 +384,67 @@
 
 
 <script>
+// ================= STATE =================
 const searchForm = document.getElementById("searchForm");
 const searchInput = document.getElementById("searchInput");
 const clearBtn = document.getElementById("clearSearch");
-
+const container = document.getElementById("contentGrid");
 
 let debounceTimer = null;
+let selectedGenres = [];
 
-// show / hide clear button
+// ================= CLEAR BUTTON =================
 searchInput.addEventListener("input", () => {
     clearBtn.style.display =
         searchInput.value.length > 0 ? "block" : "none";
 });
 
-// clear button click
 clearBtn.addEventListener("click", () => {
-    const container = document.getElementById("contentGrid");
-
-    // start clear animation
     container.classList.add("clearing");
 
-    // wait for animation to finish
     setTimeout(() => {
         container.innerHTML = "";
         container.classList.remove("clearing");
     }, 250);
 
-    // reset input + state
     searchInput.value = "";
     clearBtn.style.display = "none";
-
-    // optional: reset search state
-    currentSearchQuery = "";
 });
 
+// ESC clears search
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && searchInput.value.trim()) {
         clearBtn.click();
-        searchInput.blur(); // optional, feels nice
+        searchInput.blur();
     }
 });
 
 
 // 🔍 FORM SUBMIT (ENTER or BUTTON)
-searchForm.addEventListener("submit", function (e) {
-    e.preventDefault(); // stop page reload
-    runSearch(searchInput.value.trim());
+// ================= SEARCH =================
+searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    runSearch();
 });
 
-// ⌨️ LIVE SEARCH (OPTIONAL BUT NICE)
-searchInput.addEventListener("input", function () {
+searchInput.addEventListener("input", () => {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(() => {
-        runSearch(searchInput.value.trim());
+        runSearch();
     }, 300);
 });
 
-function runSearch(query) {
-    const container = document.getElementById("contentGrid");
+// ================= MAIN SEARCH =================
+function runSearch() {
+    const query = searchInput.value.trim();
 
-    // 🔹 if search cleared → clear results
-    if (!query) {
+    const year = document.getElementById("yearFilter")?.value || "";
+    const rating = document.getElementById("ratingFilter")?.value || "";
+    const sort = document.getElementById("sortFilter")?.value || "";
+
+    // ✅ allow filters WITHOUT search
+    if (!query && selectedGenres.length === 0 && !year && !rating) {
         container.classList.add("clearing");
 
         setTimeout(() => {
@@ -385,7 +457,12 @@ function runSearch(query) {
 
     const params = new URLSearchParams({
         q: query,
-        type: "{{ content_type }}"
+        type: "{{ content_type }}",
+        genres: selectedGenres.join(","),
+        year_start: yearStart,
+        year_end: yearEnd,
+        rating: rating,
+        sort: sort
     });
 
     fetch(`/api/content?${params.toString()}`)
@@ -394,41 +471,35 @@ function runSearch(query) {
 }
 
 
+// ================= RENDER =================
 function highlightText(text, query) {
     if (!query) return text;
 
     const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(`(${escapedQuery})`, "gi");
 
-    return text.replace(
-        regex,
-        `<mark class="search-highlight">$1</mark>`
-    );
+    return text.replace(regex, `<mark>$1</mark>`);
 }
 
 
 function renderResults(items) {
-    const container = document.getElementById("contentGrid");
     container.innerHTML = "";
 
-    if (items.length === 0) {
-      container.innerHTML = `
-        <div class="no-results">
-         <img src="/static/gif/no-results.gif" class="no-results-gif">
-         <p class="no-results-text">No results found</p>
-         </div>
-          `;
-     
-
+    if (!items.length) {
+        container.innerHTML = `
+            <div class="no-results">
+                <img src="/static/gif/no-results.gif">
+                <p>No results found</p>
+            </div>
+        `;
         return;
     }
 
     items.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "content-card";
-        card.dataset.id = item.id;   // 👈 IMPORTANT
+        card.dataset.id = item.id;
 
-        // stagger delay
         card.style.setProperty("--delay", `${index * 40}ms`);
 
         card.innerHTML = `
@@ -440,14 +511,12 @@ function renderResults(items) {
     });
 }
 
-document.getElementById("contentGrid").addEventListener("click", (e) => {
+// ================= CARD CLICK =================
+container.addEventListener("click", (e) => {
     const card = e.target.closest(".content-card");
     if (!card) return;
 
-    const contentId = card.dataset.id;
-    if (!contentId) return;
-
-    window.location.href = `/content/${contentId}`;
+    window.location.href = `/content/${card.dataset.id}`;
 });
 
 
@@ -993,18 +1062,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-const toggle = document.getElementById("themeToggle");
-
-toggle.addEventListener("click", () => {
-    document.body.classList.toggle("light");
-
-    toggle.textContent =
-        document.body.classList.contains("light") ? "☀️" : "🌙";
-});
-</script>
-
-
-<script>
 const pageType = "{{ content_type }}"; // anime or movie
 
 function loadAdminPicks(admin, containerId) {
@@ -1049,5 +1106,265 @@ loadAdminPicks("fate", "fatePicks");
 loadAdminPicks("akriti", "akritiPicks");
 </script>
 
+<script>
+
+let filters = {
+    genre: "",
+    year: "",
+    rating: "",
+    sort: ""
+};
+
+document.getElementById("filterToggle")
+.addEventListener("click", () => {
+    document.getElementById("filterPanel")
+        .classList.toggle("hidden");
+});
+
+// ================= MULTI GENRE =================
+const genreDropdown = document.getElementById("genreDropdown");
+const genreList = document.getElementById("genreList");
+const genreSelected = document.getElementById("genreSelected");
+
+if (genreDropdown) {
+    genreDropdown.addEventListener("click", () => {
+        genreList.classList.toggle("hidden");
+    });
+
+    document.querySelectorAll("#yearFilter, #ratingFilter, #sortFilter")
+    .forEach(el => {
+        el.addEventListener("change", () => {
+            runSearch();
+        });
+    });
+
+    document.querySelectorAll("#genreList .dropdown-item")
+    .forEach(item => {
+        item.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            const value = item.dataset.value;
+            item.classList.toggle("active");
+
+            if (selectedGenres.includes(value)) {
+                selectedGenres = selectedGenres.filter(g => g !== value);
+            } else {
+                selectedGenres.push(value);
+            }
+
+            updateGenreLabel();
+            renderFilterTags();
+            genreList.classList.add("hidden"); // 🔥 CLOSE DROPDOWN
+            runSearch();
+        });
+    });
+}
+
+document.addEventListener("click", (e) => {
+    document.querySelectorAll(".dropdown-list").forEach(list => {
+        if (!list.parentElement.contains(e.target)) {
+            list.classList.add("hidden");
+        }
+    });
+});
+
+function updateGenreLabel() {
+    if (!genreSelected) return;
+
+    if (selectedGenres.length === 0) {
+        genreSelected.textContent = "Any";
+    } else if (selectedGenres.length === 1) {
+        genreSelected.textContent = selectedGenres[0];
+    } else {
+        genreSelected.textContent =
+            `${selectedGenres[0]} +${selectedGenres.length - 1}`;
+    }
+}
+
+// ================= YEAR (DYNAMIC) =================
+const yearSelect = document.getElementById("yearFilter");
+
+if (yearSelect && yearSelect.options.length <= 1) {
+    const currentYear = new Date().getFullYear();
+
+    for (let y = currentYear; y >= 1950; y--) {
+        const opt = document.createElement("option");
+        opt.value = y;
+        opt.textContent = y;
+        yearSelect.appendChild(opt);
+    }
+}
+
+function setupDropdown(dropdownId, selectedId, listId, callback) {
+    const dropdown = document.getElementById(dropdownId);
+    const selected = document.getElementById(selectedId);
+    const list = document.getElementById(listId);
+
+    if (!dropdown) return;
+
+    dropdown.addEventListener("click", () => {
+        list.classList.toggle("hidden");
+    });
+
+    list.querySelectorAll(".dropdown-item").forEach(item => {
+        item.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            selected.textContent = item.textContent;
+            list.classList.add("hidden");
+
+            callback(item.dataset.value, item);
+            renderFilterTags();
+            runSearch();
+        });
+    });
+}
+
+let rating = "";
+let sort = "rating_desc";
+
+setupDropdown("ratingDropdown", "ratingSelected", "ratingList", val => rating = val);
+setupDropdown("sortDropdown", "sortSelected", "sortList", val => sort = val);
+
+
+const yearList = document.getElementById("yearList");
+
+function generateYearRanges() {
+    const currentYear = new Date().getFullYear();
+    const startYear = 1950;
+    const step = 5;
+
+    for (let y = currentYear; y >= startYear; y -= step) {
+        const end = y;
+        const start = Math.max(y - step + 1, startYear);
+
+        const div = document.createElement("div");
+        div.className = "dropdown-item";
+        div.dataset.start = start;
+        div.dataset.end = end;
+        div.textContent = `${start}–${end}`;
+
+        yearList.appendChild(div);
+    }
+}
+
+generateYearRanges();
+
+let yearStart = "";
+let yearEnd = "";
+
+setupDropdown("yearDropdown", "yearSelected", "yearList", (val, el) => {
+    yearStart = el.dataset.start;
+    yearEnd = el.dataset.end;
+});
+
+function renderFilterTags() {
+    const container = document.getElementById("activeFilters");
+    const clearBtn = document.getElementById("clearAllBtn");
+
+    container.innerHTML = ""; // reset
+
+    let hasFilters = false;
+
+    // 🎭 GENRES
+    selectedGenres.forEach(g => {
+        hasFilters = true;
+
+        const tag = document.createElement("div");
+        tag.className = "filter-tag";
+        tag.innerHTML = `${g} <span>✕</span>`;
+
+        tag.onclick = () => {
+            selectedGenres = selectedGenres.filter(x => x !== g);
+
+            document.querySelectorAll("#genreList .dropdown-item")
+                .forEach(item => {
+                    if (item.dataset.value === g) {
+                        item.classList.remove("active");
+                    }
+                });
+
+            updateGenreLabel();
+            renderFilterTags();
+            runSearch();
+        };
+
+        container.appendChild(tag);
+    });
+
+    // 📅 YEAR
+    if (yearStart && yearEnd) {
+        hasFilters = true;
+
+        const tag = document.createElement("div");
+        tag.className = "filter-tag";
+        tag.innerHTML = `${yearStart}–${yearEnd} <span>✕</span>`;
+
+        tag.onclick = () => {
+            yearStart = "";
+            yearEnd = "";
+
+            document.getElementById("yearSelected").textContent = "Any";
+
+            renderFilterTags();
+            runSearch();
+        };
+
+        container.appendChild(tag);
+    }
+
+    // ⭐ RATING
+    if (rating) {
+        hasFilters = true;
+
+        const tag = document.createElement("div");
+        tag.className = "filter-tag";
+        tag.innerHTML = `${rating}+ ⭐ <span>✕</span>`;
+
+        tag.onclick = () => {
+            rating = "";
+            document.getElementById("ratingSelected").textContent = "Any";
+
+            renderFilterTags();
+            runSearch();
+        };
+
+        container.appendChild(tag);
+    }
+
+    // 🔘 CLEAR ALL BUTTON
+    if (hasFilters) {
+        const clearBtn = document.createElement("button");
+        clearBtn.className = "clear-all-btn";
+        clearBtn.textContent = "Clear All";
+
+        clearBtn.onclick = () => {
+
+            // reset state
+            selectedGenres = [];
+            yearStart = "";
+            yearEnd = "";
+            rating = "";
+            sort = "rating_desc";
+
+            // reset UI labels
+            document.getElementById("genreSelected").textContent = "Any";
+            document.getElementById("yearSelected").textContent = "Any";
+            document.getElementById("ratingSelected").textContent = "Any";
+            document.getElementById("sortSelected").textContent = "Top Rated";
+
+            // remove active states
+            document.querySelectorAll(".dropdown-item")
+            .forEach(item => item.classList.remove("active"));
+
+            renderFilterTags();
+            runSearch();
+        };
+
+        container.appendChild(clearBtn);
+    }
+}
+
+</script>
 
 {% endblock %}

@@ -254,28 +254,44 @@ def api_spotlight():
 def api_content():
     content_type = request.args.get("type", "anime")
     genre_param = request.args.get("genres")
-    search = request.args.get("q")   # 👈 NEW
-    sort = request.args.get("sort", "trending")
+    search = request.args.get("q")
+    year = request.args.get("year")
+    rating = request.args.get("rating")
+    sort = request.args.get("sort", "rating_desc")
 
     db = get_db()
 
     query = "SELECT * FROM content WHERE type = ?"
     params = [content_type]
 
-    # 🔍 SEARCH FILTER
     if search:
         query += " AND title LIKE ?"
         params.append(f"%{search}%")
 
-    # 🎭 GENRE FILTER
+    year_start = request.args.get("year_start")
+    year_end = request.args.get("year_end")
+
+    if year_start and year_end:
+        query += " AND release_year BETWEEN ? AND ?"
+        params.append(int(year_start))
+        params.append(int(year_end))
+
+    if rating:
+        query += " AND rating >= ?"
+        params.append(float(rating))
+
     if genre_param:
         genres = genre_param.split(",")
         for g in genres:
             query += " AND genres LIKE ?"
             params.append(f"%{g}%")
 
-    # 🔥 SORT
-    if sort == "popular":
+    # SORT
+    if sort == "rating_desc":
+        query += " ORDER BY rating DESC"
+    elif sort == "rating_asc":
+        query += " ORDER BY rating ASC"
+    elif sort == "popular":
         query += " ORDER BY views_count DESC"
     else:
         query += " ORDER BY rating DESC"

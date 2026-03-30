@@ -87,6 +87,8 @@
 
 -- ALTER TABLE users ADD COLUMN preferred_world TEXT;
 
-ALTER TABLE users ADD COLUMN is_premium INTEGER DEFAULT 0;
-ALTER TABLE users ADD COLUMN premium_type TEXT;
-ALTER TABLE users ADD COLUMN premium_expiry DATETIME;
+-- ALTER TABLE users ADD COLUMN is_premium INTEGER DEFAULT 0;
+-- ALTER TABLE users ADD COLUMN premium_type TEXT;
+-- ALTER TABLE users ADD COLUMN premium_expiry DATETIME;
+
+PRAGMA table_info(content)
