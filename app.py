@@ -104,11 +104,15 @@ def signup():
                 (username, generate_password_hash(password))
             )
             db.commit()
-        except Exception:
-            return "Username already exists"
 
-        # redirect to login after successful signup
-        return redirect(url_for("login"))
+            return redirect(url_for("login"))
+
+        except Exception:
+            return render_template(
+                "signup.html",
+                error="Username already exists",
+                username=username  # 👈 preserve input
+            )
 
     return render_template("signup.html")
 
@@ -184,10 +188,10 @@ def login():
         ).fetchone()
 
         if not user:
-            return render_template("login.html", error="Invalid credentials")
+            return render_template("login.html", error="Invalid Username")
 
         if not check_password_hash(user["password_hash"], password):
-            return render_template("login.html", error="Invalid credentials")
+            return render_template("login.html", error="Invalid Password")
 
         # ✅ LOGIN SUCCESS
         session["user_id"] = user["id"]
@@ -227,6 +231,7 @@ SPOTLIGHT_VIDEO_MAP = {
     402: "/static/videos/3_idiots.mp4",
     254: "/static/videos/love_is_war_movie.mp4",
     469: "/static/videos/tangled.mp4",
+    614: "/static/videos/cmp.mp4",
     513: "/static/videos/thor.mp4"
 }
 

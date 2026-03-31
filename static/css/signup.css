@@ -55,7 +55,7 @@
     padding: 40px 36px;
     border-radius: 22px;
 
-    background: rgba(5, 10, 20, 0.8);
+    background: rgba(5, 10, 20, 0.93);
     backdrop-filter: blur(18px);
 
     color: #e5e7eb;
@@ -94,7 +94,7 @@
 
 .subtitle {
     font-size: 14px;
-    color: #9ca3af;
+    color: #d6d6d6;
     margin-bottom: 28px;
 }
 
@@ -108,14 +108,14 @@
 .signup-card input {
     padding: 12px 14px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.15);
     color: #fff;
     font-size: 14px;
 }
 
 .signup-card input::placeholder {
-    color: #6b7280;
+    color: #cbcccd;
 }
 
 .signup-card input:focus {
@@ -146,7 +146,7 @@
 .footer-text {
     margin-top: 22px;
     font-size: 13px;
-    color: #9ca3af;
+    color: #cccccc;
 }
 
 .footer-text a {
@@ -225,4 +225,30 @@ body::after {
 @keyframes dustNear {
     from { transform: translateY(0); }
     to   { transform: translateY(-1800px); }
+}
+
+.auth-error {
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #e15757;
+
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+
+    text-align: center;
+    backdrop-filter: blur(60px);
+}
+
+/* SAME SHAKE ANIMATION */
+.shake {
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
 }

@@ -12,7 +12,10 @@ OMDB_URL = "http://www.omdbapi.com/"
 
 
 MOVIE_TITLES = [
-    "avengers infinity war"
+    "chal mera putt 2",
+    "chal mera putt",
+    "chal mera putt 3",
+    "dil bechara"
 ]
 
 
@@ -259,5 +262,5 @@ def seed_movies_from_omdb():
 
 
 if __name__ == "__main__":
-    seed_anime_from_jikan()
-    # seed_movies_from_omdb()
+    # seed_anime_from_jikan()
+    seed_movies_from_omdb()
