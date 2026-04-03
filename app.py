@@ -172,8 +172,6 @@ def select_genres():
 
 
 
-
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     db = get_db()

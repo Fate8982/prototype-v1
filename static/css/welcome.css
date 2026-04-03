@@ -444,3 +444,117 @@ html, body {
         0 0 25px rgba(168,85,247,0.4),
         0 0 50px rgba(236,72,153,0.2);
 }
+
+/* ===== ANIME BUTTON ===== */
+.anime-btn {
+    position: relative;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: #020617; /* dark base */
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* ANIMATED BORDER */
+.anime-btn::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(
+        120deg,
+        #38bdf8,
+        #6366f1,
+        #a855f7,
+        #38bdf8
+    );
+    background-size: 300% 300%;
+    animation: borderFlow 6s linear infinite;
+    z-index: -1;
+}
+
+.anime-btn {
+    background-clip: padding-box;
+}
+
+
+/* INNER GLOW ON HOVER */
+.anime-btn:hover {
+    color: white;
+    box-shadow:
+        0 0 18px rgba(99,102,241,0.45),
+        0 0 30px rgba(168,85,247,0.25);
+}
+
+/* CLICK FEEDBACK */
+.anime-btn:active {
+    transform: scale(0.96);
+}
+
+/* BORDER ANIMATION */
+@keyframes borderFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* ===== MOVIE BUTTON ===== */
+.movie-btn {
+    position: relative;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: #020617; /* dark base */
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* ANIMATED BORDER */
+.movie-btn::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(
+        120deg,
+        #f8385e,
+        #f16363,
+        #f75599,
+        #f84b38
+    );
+    background-size: 300% 300%;
+    animation: borderFlow 6s linear infinite;
+    z-index: -1;
+}
+
+.movie-btn {
+    background-clip: padding-box;
+}
+
+
+/* INNER GLOW ON HOVER */
+.movie-btn:hover {
+    color: white;
+    box-shadow:
+        0 0 18px rgba(99,102,241,0.45),
+        0 0 30px rgba(168,85,247,0.25);
+}
+
+/* CLICK FEEDBACK */
+.movie-btn:active {
+    transform: scale(0.96);
+}
+
+/* BORDER ANIMATION */
+@keyframes borderFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}

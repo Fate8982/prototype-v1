@@ -12,10 +12,11 @@ OMDB_URL = "http://www.omdbapi.com/"
 
 
 MOVIE_TITLES = [
-    "chal mera putt 2",
+    "jatt nu chudail takri",
     "chal mera putt",
-    "chal mera putt 3",
-    "dil bechara"
+    "Lekh",
+    "shooter",
+    "puaada",
 ]
 
 

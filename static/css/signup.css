@@ -108,14 +108,14 @@
 .signup-card input {
     padding: 12px 14px;
     border-radius: 10px;
-    background: #0f172a;
+    background: #60beaf;
     border: 1px solid rgba(255,255,255,0.15);
     color: #fff;
     font-size: 14px;
 }
 
 .signup-card input::placeholder {
-    color: #cbcccd;
+    color: #ffffff;
 }
 
 .signup-card input:focus {
