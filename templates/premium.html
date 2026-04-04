@@ -1,294 +1,267 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<head>
-    <link rel="stylesheet" href="/static/css/premium.css">
-</head>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/premium.css">
 
-    <!-- 🧭 NAVBAR -->
-    <nav class="welcome-nav">
-        <div class="logo-container">
-            <svg class="logo-svg" viewBox="0 0 420 80" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="watchGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#7f5cff"/>
-                        <stop offset="100%" stop-color="#ec4899"/>
-                    </linearGradient>
-
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-
-            <a href="{{ url_for('welcome') }}" class="logo-link">
-                <!-- WATCH -->
-                <text x="160" y="55" class="logo-watch">NextWatch</text>
-            </a>
-            </svg>
-        </div>
-
-        <div class="nav-right">
-
-           <!-- 🎯 ALWAYS VISIBLE -->
-            <a href="{{ url_for('home', type='anime') }}" class="logo-link">
-            <button class="anime-btn">
-                Animes
-            </button>
-            </a>
-
-            <!-- 🎯 ALWAYS VISIBLE -->
-             <a href="{{ url_for('home', type='movie') }}" class="logo-link">
-            <button class="movie-btn">
-                Movies
-            </button>
-            </a>
-
-            {% if user %}
-                <a href="{{ url_for('profile') }}" class="logo-link">
-                <img src="/static/{{ user.avatar_value }}" class="avatar">
-                </a>
-                <a href="/logout" class="nav-btn">Logout</a>
-            {% else %}
-                <a href="/login" class="nav-btn">Login</a>
-            {% endif %}
-        </div>
-    </nav>
-
-
-<section class="premium-page">
-
-    <div class="premium-card">
-
-        <h1>Unlock Premium</h1>
-        <p class="subtitle">
-            Get smarter recommendations tailored just for you
-        </p>
-
-        <!-- 🔁 TOGGLE -->
-        <div class="billing-toggle">
-            <div class="toggle-pill"></div>
-
-            <span class="toggle-option active" data-type="monthly">Monthly</span>
-            <span class="toggle-option" data-type="yearly">Yearly</span>
-        </div>
-
-        <div class="price-box">
-            <span class="currency">₹</span>
-            <span id="price-value">399</span>
-            <span id="price-duration">/year</span>
-        </div>
-
-        <!-- 🔥 FEATURES -->
-        <div class="features">
-            <div class="feature">✨ Advanced Recommendations</div>
-            <div class="feature">🎭 Mood-Based Discovery</div>
-            <div class="feature">🔍 Unlimited Filters</div>
-            <div class="feature">📊 Taste Profile Insights</div>
-        </div>
-
-        <!-- 🔥 MAIN BUTTON -->
-        {% if user["is_premium"] == 1 %}
-
-            {% if user["premium_type"] == "yearly" %}
-                <!-- Already on highest plan -->
-                <button class="premium-btn disabled">
-                    Current Plan ✅
-                </button>
-
-            {% elif user["premium_type"] == "monthly" %}
-                <!-- Can upgrade -->
-                <button id="rzp-button" class="premium-btn" data-plan="yearly">
-                    Upgrade to Yearly 🚀
-                </button>
-            {% endif %}
-
-            <!-- Manage ONLY for premium -->
-            <button class="manage-btn" onclick="openManageModal()">
-                Manage Membership
-            </button>
-
-        {% else %}
-            <!-- Free user -->
-            <button id="rzp-button" class="premium-btn" data-plan="monthly">
-                Pay Now
-            </button>
-        {% endif %}
-
-        <p class="note">Secure payment via Razorpay • Cancel anytime</p>
-
-    {% if user["is_premium"] == 1 %}
-
-    <div class="cancel-overlay" id="cancelModal">
-
-        <!-- STEP 1 -->
-        <div class="cancel-modal" id="cancelStep1">
-            <span class="cancel-close" onclick="closeManageModal()">✕</span>
-
-            <h2>😢 Leaving us already?</h2>
-            <p>Your recommendations will miss you...</p>
-
-            <div class="cancel-actions">
-                <button class="cancel-danger" onclick="goToStep2()">
-                    Yes, Cancel
-                </button>
-
-                <button class="cancel-safe" onclick="closeManageModal()">
-                    No, I’ll Stay ❤️
-                </button>
-            </div>
-        </div>
-
-        <!-- STEP 2 (DOUBLE CONFIRM) -->
-        <div class="cancel-modal hidden" id="cancelStep2">
-            <span class="cancel-close" onclick="closeManageModal()">✕</span>
-
-            <h2>💔 Are you REALLY sure?</h2>
-            <p>This will remove all your premium powers 😭</p>
-
-            <div class="cancel-actions">
-                <button class="cancel-danger" onclick="cancelMembership()">
-                    Yes… I'm sure 😔
-                </button>
-
-                <button class="cancel-safe" onclick="backToStep1()">
-                    Wait, take me back 😭
-                </button>
-            </div>
-        </div>
-    </div>
+<!-- NAV -->
+<nav class="pr-nav">
+  <a href="{{ url_for('welcome') }}" class="pr-logo">NextWatch</a>
+  <div class="pr-nav-right">
+    <a href="{{ url_for('home', type='anime') }}" class="pr-pill">Animes</a>
+    <a href="{{ url_for('home', type='movie') }}" class="pr-pill">Movies</a>
+    {% if user %}
+      <a href="{{ url_for('profile') }}"><img src="/static/{{ user.avatar_value }}" class="pr-av"></a>
+      <a href="/logout" class="pr-pill">Logout</a>
+    {% else %}
+      <a href="/login" class="pr-pill">Login</a>
     {% endif %}
+  </div>
+</nav>
+
+<div class="premium-page">
+
+  <!-- HERO -->
+  <div class="pr-hero">
+    <div class="pr-hero-grid"></div>
+    <div class="pr-hero-inner">
+      <div class="pr-eyebrow"><span class="pr-eyebrow-dot"></span> Unlock the Full Experience</div>
+      <h1 class="pr-hero-title">Go<br><span class="grad">Premium</span></h1>
+      <p class="pr-hero-sub">Smarter recommendations. Deeper discovery. Your taste, amplified.</p>
+    </div>
+  </div>
+
+  <!-- TOGGLE -->
+  <div class="pr-toggle-wrap">
+    <div class="pr-toggle" id="billingToggle">
+      <div class="pr-pill-slide" id="pillSlide"></div>
+      <button class="pr-toggle-opt active" data-plan="monthly">Monthly</button>
+      <button class="pr-toggle-opt" data-plan="yearly">Yearly</button>
+    </div>
+    <span class="save-pill" id="savePill">Save 32%</span>
+  </div>
+
+  <!-- CARDS -->
+  <div class="pr-cards-wrap pr-reveal">
+
+    <!-- FREE -->
+    <div class="pr-card">
+      <div class="pr-card-body">
+        <div class="pr-plan-name">Free</div>
+        <div class="pr-price-row">
+          <span class="pr-currency">₹</span>
+          <span class="pr-amount">0</span>
+        </div>
+        <p class="pr-period-note">Always free, no card needed</p>
+        <div class="pr-divider"></div>
+        <div class="pr-features">
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Genre-based recommendations</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Favorites &amp; watchlist</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Community reviews &amp; ratings</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Basic search &amp; filters</div>
+          <div class="pr-feature locked"><span class="pr-feature-check check-no">✕</span>Mood-based discovery</div>
+          <div class="pr-feature locked"><span class="pr-feature-check check-no">✕</span>Advanced filters &amp; sorting</div>
+          <div class="pr-feature locked"><span class="pr-feature-check check-no">✕</span>Taste profile insights</div>
+        </div>
+        <span class="pr-cta cta-free">Current Plan</span>
+      </div>
     </div>
 
+    <!-- PREMIUM -->
+    <div class="pr-card pr-card-premium">
+      <div class="popular-badge">Most Popular</div>
+      <div class="pr-card-body">
+        <div class="pr-plan-name">Premium</div>
+        <div class="pr-price-row">
+          <span class="pr-currency">₹</span>
+          <span class="pr-amount" id="priceAmount">49</span>
+          <span class="pr-period" id="pricePeriod">/mo</span>
+        </div>
+        <p class="pr-period-note" id="priceNote">&nbsp;</p>
+        <div class="pr-divider"></div>
+        <div class="pr-features">
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Everything in Free</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Mood-based discovery</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Advanced filters &amp; sorting</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Taste profile insights</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Smart watchlists</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Curated admin picks</div>
+          <div class="pr-feature"><span class="pr-feature-check check-yes">✓</span>Priority feature access</div>
+        </div>
 
-</section>
+        {% if user and user["is_premium"] %}
+          {% if user["premium_type"] == "yearly" %}
+            <span class="pr-cta cta-free" style="cursor:default">Current Plan ✅</span>
+          {% else %}
+            <button id="rzp-button" class="pr-cta cta-premium" data-plan="yearly">Upgrade to Yearly 🚀</button>
+          {% endif %}
+          <button class="cta-manage" onclick="openManageModal()">Leave Membership</button>
+        {% else %}
+          <button id="rzp-button" class="pr-cta cta-premium" data-plan="monthly">Get Premium Now</button>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PERKS -->
+  <div class="pr-perks" style="margin-top:90px">
+    <div class="pr-reveal">
+      <p class="pr-section-tag">Why upgrade?</p>
+      <h2 class="pr-section-title">What you unlock with <span class="h2">Premium</span></h2>
+    </div>
+    <div class="perks-grid">
+      <div class="perk-card pr-reveal" style="transition-delay:0.05s">
+        <span class="perk-icon">🧠</span>
+        <div class="perk-title">Taste Intelligence</div>
+        <div class="perk-desc">Your profile learns from every rating, review, and favorite. Recommendations get sharper the more you use it.</div>
+      </div>
+      <div class="perk-card pr-reveal" style="transition-delay:0.1s">
+        <span class="perk-icon">🎭</span>
+        <div class="perk-title">Mood-Based Discovery</div>
+        <div class="perk-desc">Feeling adventurous? Sad? Cozy? Tell us your mood and we surface exactly what fits the moment.</div>
+      </div>
+      <div class="perk-card pr-reveal" style="transition-delay:0.15s">
+        <span class="perk-icon">🔍</span>
+        <div class="perk-title">Precision Filters</div>
+        <div class="perk-desc">Filter by year range, minimum rating, multiple genres, and sort by any metric. No more noise.</div>
+      </div>
+      <div class="perk-card pr-reveal" style="transition-delay:0.2s">
+        <span class="perk-icon">📊</span>
+        <div class="perk-title">Taste Profile</div>
+        <div class="perk-desc">See your genre breakdown, average ratings, and what kinds of stories move you most.</div>
+      </div>
+      <div class="perk-card pr-reveal" style="transition-delay:0.25s">
+        <span class="perk-icon">⭐</span>
+        <div class="perk-title">Curator Picks</div>
+        <div class="perk-desc">Access hand-picked selections from our in-house curators. Hidden gems you'd never find on your own.</div>
+      </div>
+      <div class="perk-card pr-reveal" style="transition-delay:0.3s">
+        <span class="perk-icon">🚀</span>
+        <div class="perk-title">Always First</div>
+        <div class="perk-desc">Premium members get early access to every new feature we build. You're always ahead of the curve.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE TABLE -->
+  <div class="pr-compare pr-reveal" style="margin-top:80px">
+    <p class="pr-section-tag">Full comparison</p>
+    <h2 class="pr-section-title" style="margin-bottom:32px">Free vs <span class="h2">Premium</span></h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:55%">Feature</th>
+          <th>Free</th>
+          <th>Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Genre recommendations</td><td><span class="tbl-yes">✓</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Favorites &amp; watchlist</td><td><span class="tbl-yes">✓</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Reviews &amp; ratings</td><td><span class="tbl-yes">✓</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Basic search</td><td><span class="tbl-yes">✓</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Mood-based discovery</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Advanced filters</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Taste profile insights</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Curator picks access</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">✓</span></td></tr>
+        <tr><td>Early feature access</td><td><span class="tbl-no">—</span></td><td><span class="tbl-yes">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- CANCEL MODAL -->
+{% if user and user["is_premium"] %}
+<div class="cancel-overlay" id="cancelOverlay">
+  <div class="cancel-modal" id="cancelStep1">
+    <button class="cancel-close-x" onclick="closeManageModal()">✕</button>
+    <h2>Leaving?</h2>
+    <p>Your recommendations have gotten really good. Are you sure you want to cancel your Premium membership?</p>
+    <div class="cancel-actions">
+      <button class="cancel-danger" onclick="goStep2()">Yes, cancel</button>
+      <button class="cancel-safe" onclick="closeManageModal()">No, stay ❤️</button>
+    </div>
+  </div>
+  <div class="cancel-modal hidden" id="cancelStep2" style="display:none">
+    <button class="cancel-close-x" onclick="closeManageModal()">✕</button>
+    <h2>Really sure?</h2>
+    <p>This will remove all your premium features immediately. Your taste profile will be frozen in time.</p>
+    <div class="cancel-actions">
+      <button class="cancel-danger" onclick="window.location='/cancel-membership'">Yes, I'm done</button>
+      <button class="cancel-safe" onclick="goBack()">Wait, keep it</button>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+// Scroll reveal
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){e.target.classList.add("visible"); obs.unobserve(e.target);} }), {threshold:0.1});
+document.querySelectorAll(".pr-reveal").forEach(el => obs.observe(el));
 
-    // 🔹 Elements
-    const toggleOptions = document.querySelectorAll(".toggle-option");
-    const togglePill = document.querySelector(".toggle-pill");
+// Billing toggle
+const toggleOpts = document.querySelectorAll(".pr-toggle-opt");
+const pillSlide  = document.getElementById("pillSlide");
+const priceAmt   = document.getElementById("priceAmount");
+const pricePer   = document.getElementById("pricePeriod");
+const priceNote  = document.getElementById("priceNote");
+const savePill   = document.getElementById("savePill");
+const rzpBtn     = document.getElementById("rzp-button");
 
-    const priceValue = document.getElementById("price-value");
-    const priceDuration = document.getElementById("price-duration");
-
-    const rzpButton = document.getElementById("rzp-button");
-
-    const initialPlan = "{{ selected_plan }}";
-
-    // 🔹 Safety
-    if (!priceValue || !priceDuration || !togglePill) return;
-
-    // 🔹 UI ONLY (no premium logic)
-    function setPlanUI(plan) {
-
-        if (plan === "yearly") {
-            priceValue.textContent = "399";
-            priceDuration.textContent = "/year";
-            togglePill.style.left = "50%";
-        } else {
-            priceValue.textContent = "49";
-            priceDuration.textContent = "/month";
-            togglePill.style.left = "5px";
-        }
-
-        // Active toggle
-        toggleOptions.forEach(o => o.classList.remove("active"));
-        const activeBtn = document.querySelector(`[data-type="${plan}"]`);
-        if (activeBtn) activeBtn.classList.add("active");
-
-        // ONLY update dataset (no logic)
-        if (rzpButton) {
-            rzpButton.dataset.plan = plan;
-        }
+toggleOpts.forEach(opt => {
+  opt.addEventListener("click", () => {
+    toggleOpts.forEach(o => o.classList.remove("active"));
+    opt.classList.add("active");
+    const plan = opt.dataset.plan;
+    if (plan === "yearly") {
+      pillSlide.style.left = "50%";
+      if (priceAmt)  priceAmt.textContent  = "399";
+      if (pricePer)  pricePer.textContent  = "/yr";
+      if (priceNote) priceNote.textContent = "Billed annually — save ₹190";
+      if (savePill)  savePill.style.display = "inline-block";
+      if (rzpBtn)    rzpBtn.dataset.plan    = "yearly";
+    } else {
+      pillSlide.style.left = "5px";
+      if (priceAmt)  priceAmt.textContent  = "49";
+      if (pricePer)  pricePer.textContent  = "/mo";
+      if (priceNote) priceNote.textContent = "\u00a0";
+      if (savePill)  savePill.style.display = "none";
+      if (rzpBtn)    rzpBtn.dataset.plan    = "monthly";
     }
-
-    // 🔹 Init
-    setPlanUI(initialPlan || "monthly");
-
-    // 🔹 Toggle click
-    toggleOptions.forEach(option => {
-        option.addEventListener("click", () => {
-            const plan = option.dataset.type;
-            setPlanUI(plan);
-        });
-    });
-
-    // 🔹 Razorpay
-    if (rzpButton) {
-        rzpButton.addEventListener("click", async function () {
-
-            const plan = this.dataset.plan || "monthly";
-
-            try {
-                const res = await fetch(`/create-order/${plan}`);
-                const data = await res.json();
-
-                const options = {
-                    key: "rzp_test_ST2BdDGg6Z5fxw",
-                    amount: data.amount,
-                    currency: "INR",
-                    name: "NextWatch",
-                    description: "Premium Subscription",
-                    order_id: data.order_id,
-
-                    handler: function () {
-                        window.location.href = `/payment-success/${plan}`;
-                    },
-
-                    theme: { color: "#a855f7" }
-                };
-
-                const rzp = new Razorpay(options);
-                rzp.open();
-
-            } catch (err) {
-                console.error("Payment error:", err);
-                alert("Something went wrong. Try again.");
-            }
-        });
-    }
-
+  });
 });
-</script>
 
-<script>
-// 🔹 Manage modal
-function openManageModal() {
-    const modal = document.getElementById("cancelModal");
-    const step1 = document.getElementById("cancelStep1");
-    const step2 = document.getElementById("cancelStep2");
+// Initial plan from server
+const initPlan = "{{ selected_plan }}";
+if (initPlan === "yearly") document.querySelector('[data-plan="yearly"]')?.click();
 
-    modal.classList.add("active");
-    step1.classList.remove("hidden");
-    step2.classList.add("hidden");
+// Razorpay
+if (rzpBtn) {
+  rzpBtn.addEventListener("click", async function() {
+    const plan = this.dataset.plan || "monthly";
+    try {
+      const res  = await fetch(`/create-order/${plan}`);
+      const data = await res.json();
+      new Razorpay({
+        key: "rzp_test_ST2BdDGg6Z5fxw",
+        amount: data.amount, currency: "INR",
+        name: "NextWatch", description: "Premium Subscription",
+        order_id: data.order_id,
+        handler: () => { window.location.href = `/payment-success/${plan}`; },
+        theme: { color: "#7f5cff" }
+      }).open();
+    } catch(e) { alert("Something went wrong. Please try again."); }
+  });
 }
 
-function closeManageModal() {
-    const modal = document.getElementById("cancelModal");
-    modal.classList.remove("active");
-}
-
-function goToStep2() {
-    document.getElementById("cancelStep1").classList.add("hidden");
-    document.getElementById("cancelStep2").classList.remove("hidden");
-}
-
-function backToStep1() {
-    document.getElementById("cancelStep2").classList.add("hidden");
-    document.getElementById("cancelStep1").classList.remove("hidden");
-}
-
-function cancelMembership() {
-    window.location.href = "/cancel-membership";
-}
+// Cancel modal
+function openManageModal()  { document.getElementById("cancelOverlay").classList.add("active"); }
+function closeManageModal() { document.getElementById("cancelOverlay").classList.remove("active"); }
+function goStep2()   { document.getElementById("cancelStep1").style.display="none"; document.getElementById("cancelStep2").style.display="block"; }
+function goBack()    { document.getElementById("cancelStep2").style.display="none"; document.getElementById("cancelStep1").style.display="block"; }
 </script>
 
 {% endblock %}

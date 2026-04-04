@@ -487,7 +487,59 @@ def content_detail(content_id):
         "detail.html",
         content=content
     )
-    
+
+@app.route("/api/related/<int:content_id>")
+def api_related(content_id):
+    """
+    Returns up to 12 titles that share genres with the given content.
+    Excludes the content itself.
+    Tries to match on multiple genres — more shared = higher priority.
+    """
+    db = get_db()
+
+    # Get the source content's genres and type
+    source = db.execute(
+        "SELECT type, genres FROM content WHERE id = ?",
+        (content_id,)
+    ).fetchone()
+
+    if not source or not source["genres"]:
+        # Fallback: return top-rated of same type
+        rows = db.execute("""
+            SELECT * FROM content
+            WHERE type = (SELECT type FROM content WHERE id = ?)
+            AND id != ?
+            ORDER BY rating DESC
+            LIMIT 12
+        """, (content_id, content_id)).fetchall()
+        return jsonify([dict(r) for r in rows])
+
+    genres = [g.strip() for g in source["genres"].split(",") if g.strip()]
+    content_type = source["type"]
+
+    # Build a query that scores each row by how many genres it matches.
+    # SQLite doesn't have arrays, so we SUM a CASE per genre.
+    if not genres:
+        return jsonify([])
+
+    score_expr = " + ".join(
+        [f"CASE WHEN genres LIKE '%{g}%' THEN 1 ELSE 0 END" for g in genres]
+    )
+
+    rows = db.execute(f"""
+        SELECT *,
+               ({score_expr}) AS match_score
+        FROM content
+        WHERE type = ?
+          AND id != ?
+          AND ({score_expr}) > 0
+        ORDER BY match_score DESC, rating DESC
+        LIMIT 12
+    """, (content_type, content_id)).fetchall()
+
+    return jsonify([dict(r) for r in rows])
+
+
     
 @app.route("/api/recommend")
 def api_recommend():

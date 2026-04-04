@@ -557,6 +557,7 @@ function renderSpotlight() {
         item.description?.slice(0, 200) + "...";
 
     document.getElementById("spotlightPoster").src = item.poster_url;
+    document.getElementById("watchBtn").href = `/content/${item.id}`;
     document.getElementById("detailsBtn").href = `/content/${item.id}`;
 
     const spotlight = document.getElementById("spotlight");

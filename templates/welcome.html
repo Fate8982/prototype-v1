@@ -2,185 +2,273 @@
 
 {% block content %}
 
-<head>
-    <link rel="stylesheet" href="/static/css/welcome.css">
-</head>
-<div class="welcome-page">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
 
-    <!-- 🎬 BACKGROUND VIDEO -->
-    <video autoplay muted loop class="bg-video">
-        <source src="/static/videos/foryouamv.mp4" type="video/mp4">
-    </video>
+<!-- NAV -->
+<nav class="w-nav">
+  <a href="{{ url_for('welcome') }}" class="w-nav-logo">NextWatch</a>
+  <div class="w-nav-right">
+    {% if user %}
+      <a href="{{ url_for('profile') }}"><img src="{% if user.avatar_type == 'default' %}{{ url_for('static', filename='avatars/default/' + user.avatar_value) }}{% else %}{{ url_for('static', filename=user.avatar_value) }}{% endif %}" class="w-nav-avatar"></a>
+      <a href="/logout" class="w-nav-link">Logout</a>
+    {% else %}
+      <a href="/login" class="w-nav-link">Login</a>
+      <a href="/signup" class="w-nav-link" style="background:linear-gradient(135deg,#7f5cff,#ec4899);border-color:transparent;color:#fff">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
 
-    <div class="overlay"></div>
+<!-- HERO -->
+<section class="hero-section">
+  <video autoplay muted loop playsinline class="hero-video">
+    <source src="/static/videos/foryouamv.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-noise"></div>
 
-    <!-- 🧭 NAVBAR -->
-    <nav class="welcome-nav">
-        <div class="logo-container">
-            <svg class="logo-svg" viewBox="0 0 420 80" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="watchGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#7f5cff"/>
-                        <stop offset="100%" stop-color="#ec4899"/>
-                    </linearGradient>
-
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-
-            <a href="{{ url_for('welcome') }}" class="logo-link">
-                <!-- WATCH -->
-                <text x="160" y="55" class="logo-watch">NextWatch</text>
-            </a>
-            </svg>
-        </div>
-
-        <div class="nav-right">
-
-            {% if user %}
-                <a href="{{ url_for('profile') }}" class="logo-link">
-                <img src="/static/{{ user.avatar_value }}" class="avatar">
-                </a>
-                <a href="/logout" class="nav-btn">Logout</a>
-            {% else %}
-                <a href="/login" class="nav-btn">Login</a>
-            {% endif %}
-        </div>
-    </nav>
-
-    <!-- 🎯 HERO -->
-    <div class="hero">
-
-        <h1>NextWatch</h1>
-        <p class="tagline">Discover your next favorite story</p>
-
-        <div class="world-buttons">
-            <a href="/set-world/anime" class="world-btn anime">Animes</a>
-            <a href="/set-world/movie" class="world-btn movies">Movies</a>
-        </div>
-
+  <div class="hero-content">
+    <span class="hero-eyebrow">Your next obsession awaits</span>
+    <h1 class="hero-title"><span class="grad-text">Next</span>Watch</h1>
+    <p class="hero-sub">A curated universe of anime and movies — discovered, organized, and recommended just for you.</p>
+    <div class="hero-btns">
+      <a href="/set-world/anime" class="btn-hero-anime">✦ Explore Anime</a>
+      <a href="/set-world/movie" class="btn-hero-movie">🎬 Browse Movies</a>
     </div>
+  </div>
 
-</div>
-
-<!-- 📖 ABOUT SECTION -->
-<section class="about">
-    <h2>What is NextWatch?</h2>
-    <p>
-        NextWatch helps you discover movies and anime tailored to your taste.
-        From trending hits to hidden gems, we make sure you always find something worth watching.
-    </p>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
 </section>
 
-
-<!-- 💎 PREMIUM SECTION -->
-<section class="premium">
-
-    <h2>Upgrade to Premium</h2>
-    <p class="premium-sub">
-        Unlock smarter recommendations and powerful discovery tools
-    </p>
-
-<!-- 🔁 TOGGLE -->
-<div class="billing-toggle">
-    <div class="toggle-pill"></div>
-
-    <span class="toggle-option active" data-type="monthly">Monthly</span>
-    <span class="toggle-option" data-type="yearly">Yearly</span>
-</div>
-
-    <!-- 💳 PLANS -->
-    <div class="plans">
-
-        <!-- 🆓 FREE -->
-        <div class="plan free">
-            <h3>Free</h3>
-            <p class="price">₹0</p>
-
-            <ul>
-                <li>✔ Limited Recommendations</li>
-                <li>✔ Basic Filters</li>
-                <li>✔ Standard Profile</li>
-                <li>✔ Ads (future)</li>
-            </ul>
-
-            <button class="plan-btn disabled">Current Plan</button>
+<!-- ABOUT -->
+<section id="about-strip" class="about-strip">
+  <div class="about-inner">
+    <div class="about-text w-reveal">
+      <span class="section-tag">What is NextWatch?</span>
+      <h2 class="about-lead">Discover what <span>moves you</span></h2>
+      <p class="about-body">
+        NextWatch is a personalized discovery platform built for anime and movie lovers. We understand that finding the right thing to watch can feel overwhelming — endless scrolling, vague recommendations, and zero context. We built something different.
+      </p>
+      <p class="about-body">
+        Tell us what you love, and we'll learn your taste. Whether you're chasing emotional drama, high-octane action, or slow-burn romance — NextWatch surfaces the stories that will resonate with <em>you specifically</em>.
+      </p>
+      <div class="about-features">
+        <div class="about-feature">
+          <div class="feature-icon">🧠</div>
+          <div><div class="feature-label">Taste-Based Recommendations</div><div class="feature-desc">Curated by your genre preferences, watch history, and ratings.</div></div>
         </div>
-
-        <!-- ⭐ PREMIUM -->
-        <div class="plan premium-plan">
-            <div class="tag">Most Popular</div>
-
-            <h3>Premium</h3>
-            <p class="price">
-                ₹<span id="price-value">49</span>
-                <span id="price-duration">/mo</span>
-            </p>
-
-            <ul>
-                <li>✨ Advanced AI Recommendations</li>
-                <li>🎭 Mood-Based Discovery</li>
-                <li>🔍 Unlimited Filters</li>
-                <li>📊 Taste Profile Insights</li>
-                <li>📺 Smart Watchlists</li>
-                <li>🎨 Premium Themes & Avatars</li>
-            </ul>
-
-            <a href="/premium?plan=monthly" id="premium-btn" class="plan-btn highlight">
-              pay now
-            </a>
-
-            <p class="note">Cancel anytime • No ads • Early access</p>
+        <div class="about-feature">
+          <div class="feature-icon">⭐</div>
+          <div><div class="feature-label">Community Reviews</div><div class="feature-desc">Real ratings from real watchers — no bots, no paid promotions.</div></div>
         </div>
+        <div class="about-feature">
+          <div class="feature-icon">🗂️</div>
+          <div><div class="feature-label">Favorites & Watchlists</div><div class="feature-desc">Save everything you want to watch in one beautiful place.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right w-reveal" style="transition-delay:0.15s">
+      <div class="stat-highlight-grid">
+        <div class="stat-hl"><div class="stat-hl-num">500+</div><div class="stat-hl-label">Titles</div></div>
+        <div class="stat-hl"><div class="stat-hl-num">9</div><div class="stat-hl-label">Genres</div></div>
+        <div class="stat-hl"><div class="stat-hl-num">2</div><div class="stat-hl-label">Worlds</div></div>
+        <div class="stat-hl"><div class="stat-hl-num">∞</div><div class="stat-hl-label">Discovery</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-section" class="how-section">
+  <div class="how-inner">
+    <div class="w-reveal">
+      <span class="section-tag">How It Works</span>
+      <h2 class="section-heading">Three steps to your<br><span class="h-accent">perfect watch</span></h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-card w-reveal" style="transition-delay:0.1s">
+        <div class="how-number">01</div>
+        <div class="how-icon">🎭</div>
+        <div class="how-title">Tell us your taste</div>
+        <div class="how-desc">Pick at least 3 genres you love — action, romance, horror, sci-fi. We build your taste profile from there.</div>
+      </div>
+      <div class="how-card w-reveal" style="transition-delay:0.2s">
+        <div class="how-number">02</div>
+        <div class="how-icon">✨</div>
+        <div class="how-title">Get smart recommendations</div>
+        <div class="how-desc">Our algorithm surfaces titles that match your mood, preferences, and what you've loved before. No generic lists.</div>
+      </div>
+      <div class="how-card w-reveal" style="transition-delay:0.3s">
+        <div class="how-number">03</div>
+        <div class="how-icon">❤️</div>
+        <div class="how-title">Save, rate & discover</div>
+        <div class="how-desc">Favorite the ones you love, leave reviews, and let every interaction make your recommendations sharper.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team-section" class="team-section">
+  <div class="team-inner">
+    <div class="team-intro w-reveal">
+      <span class="section-tag">The Team</span>
+      <h2 class="section-heading">Built with Passion by <span class="h-accent">two anime nerds</span></h2>
+      <p style="font-size:15px;font-weight:300;color:var(--soft);line-height:1.8;margin-top:16px">
+        NextWatch was built as a college project by two people who are genuinely passionate about anime and cinema. Here's a little message from each of us.
+      </p>
+    </div>
+
+    <div class="team-grid">
+
+      <!-- Rahul -->
+      <div class="team-card w-reveal" style="transition-delay:0.1s">
+        <div class="team-card-accent"></div>
+        <div class="team-card-body">
+          <div class="team-avatar-row">
+            <div class="team-avatar-ring">
+              <div class="team-avatar-inner">🧑‍💻</div>
+            </div>
+            <div>
+              <div class="team-name">Rahul Saggu</div>
+              <div class="team-role">Co Developer · Content Curator</div>
+            </div>
+          </div>
+          <p class="team-message">
+            "I've spent more hours watching anime than I'd like to admit — and even more hours arguing about which ones are actually worth watching. NextWatch started from a simple frustration: every recommendation platform either flooded me with things I'd already seen, or things I'd never care about. I wanted something that actually knew my taste. So I built it. I hope when you use NextWatch, it feels less like a database and more like getting a recommendation from a friend who genuinely gets you."
+          </p>
+          <div class="team-tags">
+            <span class="team-tag">Flask</span>
+            <span class="team-tag">Python</span>
+            <span class="team-tag">UI/UX</span>
+            <span class="team-tag">Anime Fan</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Akriti -->
+      <div class="team-card w-reveal" style="transition-delay:0.2s">
+        <div class="team-card-accent"></div>
+        <div class="team-card-body">
+          <div class="team-avatar-row">
+            <div class="team-avatar-ring">
+              <div class="team-avatar-inner">👩‍🎨</div>
+            </div>
+            <div>
+              <div class="team-name">Akriti</div>
+              <div class="team-role">Co-Developer · Designer</div>
+            </div>
+          </div>
+          <p class="team-message">
+            "Movies have always been my escape. There's something magical about sitting down with the right film at the right moment — it can completely shift your perspective. When we started building this, I wanted to make sure NextWatch didn't just recommend what's popular, but what's meaningful. The curated picks, the genre moods, the human touch behind the recommendations — that's all me trying to make sure you always have something worth watching waiting for you. Welcome to our little corner of the internet."
+          </p>
+          <div class="team-tags">
+            <span class="team-tag">Database</span>
+            <span class="team-tag">Content</span>
+            <span class="team-tag">Research</span>
+            <span class="team-tag">Cinema Buff</span>
+          </div>
+        </div>
+      </div>
 
     </div>
+  </div>
+</section>
+
+<!-- PREMIUM -->
+<section class="premium-strip">
+  <div class="premium-inner">
+    <div class="premium-heading w-reveal">
+      <span class="section-tag">Upgrade</span>
+      <h2 class="section-heading">Unlock the full<br><span class="h-accent">NextWatch</span> experience</h2>
+      <p style="font-size:15px;font-weight:300;color:var(--soft);line-height:1.8;margin-top:16px">
+        Free forever gets you a lot. Premium gets you everything.
+      </p>
+    </div>
+
+    <div class="billing-toggle-wrap w-reveal">
+      <div class="billing-toggle" id="billingToggle">
+        <div class="toggle-pill-w" id="togglePillW"></div>
+        <span class="toggle-opt active" data-plan="monthly">Monthly</span>
+        <span class="toggle-opt" data-plan="yearly">Yearly</span>
+      </div>
+      <span class="save-badge" id="saveBadge" style="display:none">Save 32%</span>
+    </div>
+
+    <div class="plans-grid w-reveal" style="transition-delay:0.1s">
+      <div class="plan-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price"><span class="plan-price-currency">₹</span>0</div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature-item"><span class="check">✓</span> Genre-based recommendations</div>
+          <div class="plan-feature-item"><span class="check">✓</span> Favorites & watchlist</div>
+          <div class="plan-feature-item"><span class="check">✓</span> Community reviews</div>
+          <div class="plan-feature-item"><span class="cross">✗</span> <span style="color:var(--muted)">Mood-based discovery</span></div>
+          <div class="plan-feature-item"><span class="cross">✗</span> <span style="color:var(--muted)">Advanced filters</span></div>
+        </div>
+        <span class="plan-btn plan-btn-free">Current Plan</span>
+      </div>
+
+      <div class="plan-card highlighted">
+        <div class="plan-tag">Most Popular</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">
+          <span class="plan-price-currency">₹</span><span id="premiumPrice">49</span><span class="plan-price-period" id="premiumPeriod"> /mo</span>
+        </div>
+        <div class="plan-divider"></div>
+        <div class="plan-features">
+          <div class="plan-feature-item"><span class="check">✓</span> Everything in Free</div>
+          <div class="plan-feature-item"><span class="check">✓</span> Mood-based discovery</div>
+          <div class="plan-feature-item"><span class="check">✓</span> Advanced filters & sorting</div>
+          <div class="plan-feature-item"><span class="check">✓</span> Taste profile insights</div>
+          <div class="plan-feature-item"><span class="check">✓</span> Smart watchlists</div>
+        </div>
+        <a href="/premium?plan=monthly" id="premiumBtn" class="plan-btn plan-btn-premium">Get Premium</a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <script>
-const toggleOptions = document.querySelectorAll(".toggle-option");
-const togglePill = document.querySelector(".toggle-pill");
+// Scroll reveal
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll(".w-reveal").forEach(el => revealObs.observe(el));
 
-const priceValue = document.getElementById("price-value");
-const priceDuration = document.getElementById("price-duration");
+// Billing toggle
+const opts = document.querySelectorAll(".toggle-opt");
+const pill = document.getElementById("togglePillW");
+const priceEl = document.getElementById("premiumPrice");
+const periodEl = document.getElementById("premiumPeriod");
+const premBtn = document.getElementById("premiumBtn");
+const saveBadge = document.getElementById("saveBadge");
 
-const premiumCard = document.querySelector(".premium-plan");
-const premiumBtn = document.getElementById("premium-btn"); // 🔥 NEW
-
-toggleOptions.forEach((option, index) => {
-    option.addEventListener("click", () => {
-
-        // Active toggle
-        toggleOptions.forEach(o => o.classList.remove("active"));
-        option.classList.add("active");
-
-        // 🔥 Move sliding pill
-        togglePill.style.left = index === 0 ? "5px" : "50%";
-
-        // 🔥 Price logic
-        const type = option.getAttribute("data-type");
-
-        let newPrice = type === "monthly" ? "49" : "399";
-        let newDuration = type === "monthly" ? "/mo" : "/year";
-
-        // Animate price
-        priceValue.innerHTML = `<span class="roll">${newPrice}</span>`;
-        priceDuration.textContent = newDuration;
-
-        // 🔥 UPDATE BUTTON LINK (THIS IS THE IMPORTANT PART)
-        premiumBtn.href = `/premium?plan=${type}`;
-
-        // 🔥 Glow effect
-        premiumCard.classList.remove("active-glow");
-        void premiumCard.offsetWidth;
-        premiumCard.classList.add("active-glow");
-    });
+opts.forEach((opt, i) => {
+  opt.addEventListener("click", () => {
+    opts.forEach(o => o.classList.remove("active"));
+    opt.classList.add("active");
+    const plan = opt.dataset.plan;
+    if (plan === "yearly") {
+      pill.style.left = "50%";
+      priceEl.textContent = "399";
+      periodEl.textContent = " /yr";
+      premBtn.href = "/premium?plan=yearly";
+      saveBadge.style.display = "inline-block";
+    } else {
+      pill.style.left = "4px";
+      priceEl.textContent = "49";
+      periodEl.textContent = " /mo";
+      premBtn.href = "/premium?plan=monthly";
+      saveBadge.style.display = "none";
+    }
+  });
 });
 </script>
-
 
 {% endblock %}

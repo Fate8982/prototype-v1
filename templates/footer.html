@@ -1,31 +1,95 @@
 <head>
     <link rel="stylesheet" href="/static/css/footer.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
+
 <footer class="site-footer">
-    <div class="footer-container">
 
-        <!-- LEFT -->
-        <div class="footer-left">
-            <h2 class="footer-logo">NextWatch</h2>
-            <p class="footer-tagline">
-                Discover your next obsession 🎬
-            </p>
-        </div>
+  <!-- SCROLLING TICKER -->
+  <div class="footer-ticker">
+    <div class="ticker-track">
+      <!-- Duplicated for seamless loop -->
+      <span class="ticker-item"><span class="ticker-dot"></span>Discover Anime</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Explore Movies</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Curated Recommendations</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Rate &amp; Review</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Save Favorites</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Built with Passion</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Your Taste, Your World</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Discover Anime</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Explore Movies</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Curated Recommendations</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Rate &amp; Review</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Save Favorites</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Built with Passion</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Your Taste, Your World</span>
+    </div>
+  </div>
 
-        <!-- RIGHT -->
-        <div class="footer-right">
-            <a href="/welcome">Home</a>
-            <a href="/">Browse</a>
-            <a href="/premium">Premium</a>
-            <a href="/profile">Profile</a>
-            <a href="/favorites">Favourites</a>
-        </div>
+  <!-- MAIN BODY -->
+  <div class="footer-body">
 
+    <!-- BRAND -->
+    <div class="footer-brand">
+      <div class="footer-logo-mark">NextWatch</div>
+      <p class="footer-tagline">
+        Discover anime and movies curated to your taste. Built by two students who love great stories.
+      </p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn" title="GitHub">⌨️</a>
+        <a href="#" class="social-btn" title="Instagram">📸</a>
+        <a href="#" class="social-btn" title="Twitter">🐦</a>
+      </div>
     </div>
 
-    <!-- BOTTOM -->
-    <div class="footer-bottom">
-        © 2026 NextWatch. All rights reserved.
+    <!-- EXPLORE -->
+    <div class="footer-col">
+      <p class="footer-col-title">Explore</p>
+      <ul>
+        <li><a href="/welcome">Home</a></li>
+        <li><a href="/?type=anime">Browse Anime</a></li>
+        <li><a href="/?type=movie">Browse Movies</a></li>
+        <li><a href="/favorites">Favorites</a></li>
+      </ul>
     </div>
+
+    <!-- ACCOUNT -->
+    <div class="footer-col">
+      <p class="footer-col-title">Account</p>
+      <ul>
+        <li><a href="/profile">My Profile</a></li>
+        <li><a href="/select-genres?edit=1">Edit Genres</a></li>
+        <li><a href="/premium">Go Premium</a></li>
+        {% if user %}
+        <li><a href="/logout">Logout</a></li>
+        {% else %}
+        <li><a href="/login">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- PROJECT -->
+    <div class="footer-col">
+      <p class="footer-col-title">Project</p>
+      <ul>
+        <li><a href="/welcome#about-strip">About NextWatch</a></li>
+        <li><a href="/welcome#how-section">How It Works</a></li>
+        <li><a href="/welcome#team-section">Meet the Team</a></li>
+        {% if not user %}
+        <li><a href="/signup">Join Free</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 <span>NextWatch</span> · All rights reserved</p>
+    <!-- <p class="footer-made-with">Made with <span class="heart-beat">♥</span> by Rahul &amp; Akriti</p> -->
+     <p class="footer-made-with">Despite Everything, It's still you.</p>
+    <div class="footer-badge">🎓 College Project · 2026</div>
+  </div>
+
 </footer>
